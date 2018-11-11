@@ -1,6 +1,7 @@
 # BMSTU
 ## Modeling
 * lab1 distributions
+* lab2 pseudorandom numbers
 ## WEB
 ## Computer Networks (+ course work)
 ## Information Security
