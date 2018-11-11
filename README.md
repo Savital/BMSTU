@@ -1,7 +1,7 @@
 # BMSTU
 ## Modeling
-* lab1 distributions
-* lab2 pseudorandom numbers
+* lab1 Моделирование ФПРВ и ФРВ случайных величин
+* lab2 Разработка способа оценки псевдослучайных величин
 ## WEB
 * lab1 Изучение протокола HTTP
 * lab2 Сконфигурировать nginx сервер
