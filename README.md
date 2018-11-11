@@ -1,4 +1,4 @@
-# BMSTU labs
+# BMSTU
 ## Modeling
 ## WEB
 ## Computer Networks (+ course work)
