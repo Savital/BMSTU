@@ -116,6 +116,10 @@
 
 
 ## Computer Networks (+ course work)
+* lab1 UDP Sockets
+* lab2 TCP Sockets
+* lab3 UDP File
+
 ## Information Security
 * lab1 
     *  Protect program from unauthorised access using CPUID check. This program should be done in two parts: first is the installer which contains license calculating, the second part is the "program" itself, which is basically a sum check.
