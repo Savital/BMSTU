@@ -1,5 +1,6 @@
 # BMSTU
 ## Modeling
+* lab1 distributions
 ## WEB
 ## Computer Networks (+ course work)
 ## Information Security
