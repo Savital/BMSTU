@@ -7,13 +7,11 @@
 #include <netinet/in.h>
 
 #define ip_addr "127.0.0.1"
-#define message_len 512
-#define socket_port 31337
+#define message_len 256
+#define socket_port 21567
 
 int main(void)
 {
-    printf("Hello Server!\n");
-
     struct sockaddr_in server_sockaddr, client_sockaddr;
     int sock_desc;
     int cslen = sizeof(client_sockaddr);
