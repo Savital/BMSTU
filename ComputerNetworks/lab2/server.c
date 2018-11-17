@@ -5,60 +5,70 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <string.h>
 
-#define ip_addr "127.0.0.1"
 #define message_len 256
-#define socket_port 21566
+#define socket_port 333331
 
-int main(void)
+void handle_error(char* error) 
 {
+    fprintf(stderr, "%s\n", error);
+    exit(-1);
+}
+
+int main() {
     struct sockaddr_in server_sockaddr, client_sockaddr;
     int sock_desc;
     int accept_desc;
-    char buf[message_len];
 
-    if ((sock_desc = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        perror("Error socket()\n");
-        exit(1);
+    char* buf = calloc(sizeof(char), message_len);
+    if (buf == NULL) {
+        handle_error("allocate memory error");
     }
+
+    int cslen = sizeof(client_sockaddr);
+    if ((sock_desc = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+        handle_error("socket error!");
+    }
+
+    memset((char *) &server_sockaddr, 0, cslen);
 
     server_sockaddr.sin_family = AF_INET;
     server_sockaddr.sin_port = htons(socket_port);
     server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    if (bind(sock_desc, (struct sockaddr*)&server_sockaddr, sizeof(server_sockaddr)) < 0)
-    {
-        perror("Error bind()\n");
-        exit(1);
+    if (bind(sock_desc, &server_sockaddr, cslen) == -1) {
+        handle_error("bind error!");
     }
 
-    listen(sock_desc, 1);
+    listen(sock_desc, 3);
 
-    while (1)
-    {
-        socklen_t cslen = sizeof(client_sockaddr);
-        if (accept_desc = accept(sock_desc, (struct sockaddr*)&client_sockaddr, &cslen) < 0)
-        {
-            perror("Error accept()\n");
-            exit(1);
-        }
-
-        printf("Received message from: %s:%d\nMessage: %s", inet_ntoa(client_sockaddr.sin_addr), ntohs(client_sockaddr.sin_port), buf);
-
-        while (1)
-        {
-            int num_bytes = recv(accept_desc, buf, message_len, 0);
-            if (num_bytes <= 0)
-                break;
-            send(accept_desc, buf, num_bytes, 0);
-        }
-
-        close(accept_desc);
-        
+    accept_desc = accept(sock_desc, (struct sockaddr *)&client_sockaddr, (socklen_t*)&cslen);
+    if (accept_desc < 0) {
+       handle_error("accept error");
     }
 
+    while (1) 
+    {
+        ssize_t size = recv(accept_desc, buf, message_len, 0);
+        if (size < 0) 
+        {
+            handle_error("recv error");
+            break;
+        }
+        if (size == 0)
+            break;
+
+        printf("Recieved message from %s: %d\nContent: %s\n", inet_ntoa(client_sockaddr.sin_addr), ntohs(client_sockaddr.sin_port), buf);
+        send(accept_desc, buf, size, 0);
+
+        for (ssize_t i = 0; i < size; ++i) 
+        {
+            buf[i] = 0;
+        }
+    }
+
+    free(buf);
+    close(accept_desc);
     close(sock_desc);
 
     return 0;

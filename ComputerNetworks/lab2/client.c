@@ -8,16 +8,16 @@
 
 #define ip_addr "127.0.0.1"
 #define message_len 256
-#define socket_port 21566
+#define socket_port 333331
 
 int main(void)
 {
     struct sockaddr_in server_sockaddr;
     int sock_desc;
-    char *message = "hellow server";
+    char message[message_len];
     char buf[message_len];
 
-    if ((sock_desc = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if ((sock_desc = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
     {
         perror("Error socket()\n");
         exit(1);
@@ -25,22 +25,28 @@ int main(void)
 
     server_sockaddr.sin_family = AF_INET;
     server_sockaddr.sin_port = htons(socket_port);
-    server_sockaddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    
+    if (inet_aton(ip_addr, &server_sockaddr.sin_addr) == 0)
+    {
+        perror("Error ip_addr\n");
+        exit(1);
+    }
+    //server_sockaddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     if (connect(sock_desc, (struct sockaddr *)&server_sockaddr, sizeof(server_sockaddr)) < 0)
     {
         perror("Error connect()\n");
         exit(1);
     }
 
-    //printf("Please, enter a message: \n");
-    //fgets(buf, message_len, stdin);
-    if (send(sock_desc, message, sizeof(message), 0) < 0)
+    printf("Please, enter a message: \n");
+    fgets(message, message_len, stdin);
+    if (send(sock_desc, message, message_len, 0) < 0)
     {
         perror("Error send()\n");
         exit(1);
     }
 
-    if (recv(sock_desc, buf, sizeof(message), 0) < 0)
+    if (recv(sock_desc, buf, message_len, 0) < 0)
     {
         perror("Error recv()\n");
         exit(1);
