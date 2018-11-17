@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <string.h>
 
 #define ip_addr "127.0.0.1"
 #define message_len 256
@@ -26,7 +27,7 @@ int main(void)
     memset((char*)&server_sockaddr, 0, sizeof(server_sockaddr));
     server_sockaddr.sin_family = AF_INET;
     server_sockaddr.sin_port = htons(socket_port);
-    server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY); //???
+    server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     
     if (bind(sock_desc, &server_sockaddr, sizeof(server_sockaddr)) == -1)
     {
@@ -41,7 +42,10 @@ int main(void)
             perror("Error recvfrom()\n");
             exit(1);
         }
-        printf("Received message from: %s:%d\n '%s'", inet_ntoa(client_sockaddr.sin_addr), ntohs(client_sockaddr.sin_port), buf);
+        printf("Received message from: %s:%d\nMessage: %s", inet_ntoa(client_sockaddr.sin_addr), ntohs(client_sockaddr.sin_port), buf);
+        
+        if (buf[0] == '$')
+            break;
     }
 
     close(sock_desc);
