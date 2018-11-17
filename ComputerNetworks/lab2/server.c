@@ -15,6 +15,7 @@ int main(void)
 {
     struct sockaddr_in server_sockaddr, client_sockaddr;
     int sock_desc;
+    int accept_desc;
     char buf[message_len];
 
     if ((sock_desc = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -23,7 +24,30 @@ int main(void)
         exit(1);
     }
 
-    
+    server_sockaddr.sin_family = AF_INET;
+    server_sockaddr.sin_port = htons(socket_port);
+    server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    if (bind(sock_desc, (struct sockaddr*)&server_sockaddr, sizeof(server_sockaddr)) < 0)
+    {
+        perror("Error bind()\n");
+        exit(1);
+    }
+
+    listen(sock_desc, 1);
+
+    while (1)
+    {
+        socklen_t cslen = sizeof(client_sockaddr);
+        if (accept_desc = accept(sock_desc, (struct sockaddr*)&client_sockaddr, &cslen) < 0)
+        {
+            perror("Error accept()\n");
+            exit(1);
+        }
+
+        close(accept_desc);
+        
+    }
 
     close(sock_desc);
 

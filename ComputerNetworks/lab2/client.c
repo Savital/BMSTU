@@ -31,6 +31,22 @@ int main(void)
         exit(1);
     }
 
+    printf("Please, enter a message: \n");
+    fgets(buf, message_len, stdin);
+    if (send(sock_desc, buf, message_len, 0) < 0)
+    {
+        perror("Error send()\n");
+        exit(1);
+    }
+
+    if (recv(sock_desc, buf, message_len, 0) < 0)
+    {
+        perror("Error recv()\n");
+        exit(1);
+    }
+
+    printf("Server returned message: %s\n", buf);
+
     close(sock_desc);
     
     return 0;
