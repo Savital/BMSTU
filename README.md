@@ -119,6 +119,8 @@
 * lab1 UDP Sockets
 * lab2 TCP Sockets
 * lab3 UDP File
+* Course work
+* Реферат
 
 ## Information Security
 * lab1 
