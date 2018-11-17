@@ -15,10 +15,9 @@ int main(void)
 {
     struct sockaddr_in server_sockaddr, client_sockaddr;
     int sock_desc;
-    int cslen = sizeof(client_sockaddr);
     char buf[message_len];
 
-    if ((sock_desc = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+    if ((sock_desc = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         perror("Error socket()\n");
         exit(1);

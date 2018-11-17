@@ -16,13 +16,20 @@ int main(void)
     int sock_desc;
     char buf[message_len];
 
-    if ((sock_desc = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+    if ((sock_desc = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         perror("Error socket()\n");
         exit(1);
     }
 
-    
+    server_sockaddr.sin_family = AF_INET;
+    server_sockaddr.sin_port = htons(socket_port);
+    server_sockaddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    if (connect(sock_desc, (struct sockaddr *)&server_sockaddr, sizeof(server_sockaddr)) < 0)
+    {
+        perror("Error connect()\n");
+        exit(1);
+    }
 
     close(sock_desc);
     

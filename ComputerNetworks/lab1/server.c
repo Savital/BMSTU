@@ -18,7 +18,7 @@ int main(void)
     int cslen = sizeof(client_sockaddr);
     char buf[message_len];
 
-    if ((sock_desc = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+    if ((sock_desc = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
     {
         perror("Error socket()\n");
         exit(1);
@@ -29,7 +29,7 @@ int main(void)
     server_sockaddr.sin_port = htons(socket_port);
     server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     
-    if (bind(sock_desc, &server_sockaddr, sizeof(server_sockaddr)) == -1)
+    if (bind(sock_desc, &server_sockaddr, sizeof(server_sockaddr)) < 0)
     {
         perror("Error bind()\n");
         exit(1);
@@ -37,7 +37,7 @@ int main(void)
 
     while (1)
     {
-        if (recvfrom(sock_desc, buf, message_len, 0, &client_sockaddr, &cslen) == -1)
+        if (recvfrom(sock_desc, buf, message_len, 0, &client_sockaddr, &cslen) < 0)
         {
             perror("Error recvfrom()\n");
             exit(1);
