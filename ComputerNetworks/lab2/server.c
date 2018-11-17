@@ -9,7 +9,7 @@
 
 #define ip_addr "127.0.0.1"
 #define message_len 256
-#define socket_port 21567
+#define socket_port 21566
 
 int main(void)
 {
@@ -43,6 +43,16 @@ int main(void)
         {
             perror("Error accept()\n");
             exit(1);
+        }
+
+        printf("Received message from: %s:%d\nMessage: %s", inet_ntoa(client_sockaddr.sin_addr), ntohs(client_sockaddr.sin_port), buf);
+
+        while (1)
+        {
+            int num_bytes = recv(accept_desc, buf, message_len, 0);
+            if (num_bytes <= 0)
+                break;
+            send(accept_desc, buf, num_bytes, 0);
         }
 
         close(accept_desc);
