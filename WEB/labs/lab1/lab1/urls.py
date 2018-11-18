@@ -15,8 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from myapp import views as v
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
-    path('myapp/', include('myapp.urls')),
+    #path('$', 'lab1.views.home', name='home'),
     path('admin/', admin.site.urls),
+    path('', v.index),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
