@@ -1,1 +1,1 @@
-UDP sockets lab1
+UDP sockets simple text transfer

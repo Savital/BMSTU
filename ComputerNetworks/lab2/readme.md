@@ -1,1 +1,1 @@
-TCP sockets lab2
+TCP sockets simple text transfer
