@@ -18,8 +18,8 @@ void handle_error(char* error)
 
 int main(void)
 {
-    struct sockaddr_in server_sockaddr;
     int sock_desc;
+    struct sockaddr_in server_sockaddr;
     char message[message_len];
     char buf[message_len];
 

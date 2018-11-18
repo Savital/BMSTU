@@ -15,10 +15,11 @@ void handle_error(char* error)
     exit(-1);
 }
 
-int main() {
-    struct sockaddr_in server_sockaddr, client_sockaddr;
+int main() 
+{    
     int sock_desc;
     int accept_desc;
+    struct sockaddr_in server_sockaddr, client_sockaddr;
 
     char* buf = calloc(sizeof(char), message_len);
     if (buf == NULL) 
@@ -33,7 +34,6 @@ int main() {
     }
 
     memset((char *) &server_sockaddr, 0, cslen);
-
     server_sockaddr.sin_family = AF_INET;
     server_sockaddr.sin_port = htons(socket_port);
     server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
