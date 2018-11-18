@@ -21,12 +21,14 @@ int main() {
     int accept_desc;
 
     char* buf = calloc(sizeof(char), message_len);
-    if (buf == NULL) {
+    if (buf == NULL) 
+    {
         handle_error("allocate memory error");
     }
 
     int cslen = sizeof(client_sockaddr);
-    if ((sock_desc = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
+    if ((sock_desc = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) 
+    {
         handle_error("socket error!");
     }
 
@@ -36,15 +38,19 @@ int main() {
     server_sockaddr.sin_port = htons(socket_port);
     server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    if (bind(sock_desc, &server_sockaddr, cslen) == -1) {
+    if (bind(sock_desc, &server_sockaddr, cslen) == -1) 
+    {
+        close(sock_desc);
         handle_error("bind error!");
     }
 
     listen(sock_desc, 3);
 
     accept_desc = accept(sock_desc, (struct sockaddr *)&client_sockaddr, (socklen_t*)&cslen);
-    if (accept_desc < 0) {
-       handle_error("accept error");
+    if (accept_desc < 0) 
+    {
+        close(sock_desc);
+        handle_error("accept error");
     }
 
     while (1) 
@@ -52,6 +58,8 @@ int main() {
         ssize_t size = recv(accept_desc, buf, message_len, 0);
         if (size < 0) 
         {
+            close(sock_desc);
+            close(accept_desc);
             handle_error("recv error");
             break;
         }
