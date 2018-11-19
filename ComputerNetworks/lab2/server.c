@@ -66,7 +66,13 @@ int main()
         if (size == 0)
             break;
 
-        printf("Recieved message from %s: %d\nContent: %s\n", inet_ntoa(client_sockaddr.sin_addr), ntohs(client_sockaddr.sin_port), buf);
+        for (ssize_t i = size - 2; i >= 0; i--) 
+        {
+            buf[i + 1] = buf[i];
+        }
+        buf[0] = '$';
+
+        printf("Recieved message from %s: %d\nMessage: %s\n", inet_ntoa(client_sockaddr.sin_addr), ntohs(client_sockaddr.sin_port), buf);
         send(accept_desc, buf, size, 0);
 
         for (ssize_t i = 0; i < size; ++i) 
@@ -74,7 +80,7 @@ int main()
             buf[i] = 0;
         }
     }
-
+    
     free(buf);
     close(accept_desc);
     close(sock_desc);

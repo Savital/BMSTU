@@ -39,17 +39,25 @@ int main(void)
 
     printf("Please, enter a message: \n");
     fgets(message, message_len, stdin);
-    if (send(sock_desc, message, message_len, 0) < 0)
-    {
-        close(sock_desc);
-        handle_error("Error send()\n");
-    }
 
-    if (recv(sock_desc, buf, message_len, 0) < 0)
+    while (1)
     {
-        close(sock_desc);
-        handle_error("Error recv()\n");
+        if (send(sock_desc, message, message_len, 0) < 0)
+        {
+            close(sock_desc);
+            handle_error("Error send()\n");
+        }
+
+        if (recv(sock_desc, buf, message_len, 0) < 0)
+        {
+            close(sock_desc);
+            handle_error("Error recv()\n");
+        }
+
+        if (buf[0] == '$')
+            break;
     }
+    
 
     printf("Server returned message: %s\n", buf);
 
