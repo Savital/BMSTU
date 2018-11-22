@@ -27,6 +27,10 @@ void file_send(int sock_desc)
     ssize_t size = read(file_desc, buff, max_file_length);
 
     write(sock_desc, buff, size);
+    read(sock_desc, message, sizeof(message));
+    printf("Message from server: %s\n", message);
+    write(sock_desc, name, sizeof(name));
+
     memset(buff, 0, max_file_length);
 
     read(sock_desc, message, sizeof(message));
@@ -66,8 +70,6 @@ int main(void)
     file_send(sock_desc);
 
     close(sock_desc);
-    
-    printf("Closed CLIENT\n");
 
     return 0;
 }
