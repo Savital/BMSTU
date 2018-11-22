@@ -3,3 +3,6 @@
 #define max_file_length 65536
 #define max_filename_length 256
 #define max_message_length 1024
+
+void file_receive(int sock_desc);
+void file_send(int sock_desc);

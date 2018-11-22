@@ -6,8 +6,29 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <sys/stat.h>
 
 #include "file_transfer.h"
+
+void file_receive(int sock_desc)
+{
+    char buff[max_file_length];
+    char message[max_message_length];
+
+    ssize_t size = read(sock_desc, buff, sizeof(buff));
+
+    FILE* file_desc = fopen("received_file", "w");
+    fwrite(buff, sizeof(char), size, file_desc);
+    chmod("received_file", 0777);
+    close(file_desc);
+
+    memset((char*) buff, 0, max_file_length);
+    memset((char*) message, 0, max_message_length);
+    
+    sprintf(message, "Length of file is: %d\n", (unsigned) size);
+
+    write(sock_desc, message, sizeof(message));
+}
 
 void handle_error(char* error) 
 {
@@ -20,7 +41,6 @@ int main(void)
     int sock_desc, accept_desc;
     struct sockaddr_in server_sockaddr, client_sockaddr;
     int cslen = sizeof(client_sockaddr);
-    //size_t size;
 
     if ((sock_desc = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -57,9 +77,12 @@ int main(void)
 
     printf("server accept()\n");
     
+    file_receive(accept_desc);
 
     close(sock_desc);
     close(accept_desc);
+
+    printf("Closed SERVER\n");
 
     return 0;
 }

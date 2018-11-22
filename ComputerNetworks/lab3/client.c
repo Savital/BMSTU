@@ -9,6 +9,33 @@
 
 #include "file_transfer.h"
 
+void file_send(int sock_desc)
+{
+    char buff[max_file_length];
+    char name[max_filename_length];
+    char message[max_message_length];
+    int file_desc = 0;
+
+    memset((char*) buff, 0, max_file_length);
+    memset((char*) name, 0, max_filename_length);
+    memset((char*) message, 0, max_message_length);
+
+    printf("Enter filename:\n");
+    scanf("%s", name);
+
+    file_desc = open(name, 0);
+    ssize_t size = read(file_desc, buff, max_file_length);
+
+    write(sock_desc, buff, size);
+    memset(buff, 0, max_file_length);
+
+    read(sock_desc, message, sizeof(message));
+
+    printf("Message from server: %s\n", message);
+
+    close(file_desc);
+}
+
 void handle_error(char* error) 
 {
     fprintf(stderr, "%s\n", error);
@@ -36,7 +63,11 @@ int main(void)
         close(sock_desc);
     }
 
+    file_send(sock_desc);
+
     close(sock_desc);
     
+    printf("Closed CLIENT\n");
+
     return 0;
 }
