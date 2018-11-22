@@ -17,38 +17,26 @@ void handle_error(char* error)
 
 int main(void)
 {
-    int sock_desc, sending_sock;
-    struct sockaddr_in server_sockaddr, client_sockaddr;
+    int sock_desc;
+    struct sockaddr_in server_sockaddr;
 
-    if ((sock_desc = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    if ((sock_desc = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        handle_error("error socket");
+        handle_error("client error socket()");
     }
 
     memset((char *) &server_sockaddr, 0, sizeof(server_sockaddr));
     server_sockaddr.sin_family = AF_INET;
-    server_sockaddr.sin_port = htons(server_port);
+    server_sockaddr.sin_port = htons(socket_port);
     server_sockaddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
-    memset((char *) &client_sockaddr, 0, sizeof(client_sockaddr));
-    client_sockaddr.sin_family = AF_INET;
-    client_sockaddr.sin_port = htons(client_port);
-    client_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    if (bind(sock_desc, (const struct sockaddr*) &client_sockaddr, sizeof(client_sockaddr)) < 0)
+    if (connect(sock_desc, (struct sockaddr*)&server_sockaddr, sizeof(server_sockaddr)) < 0)
     {
-        handle_error("error bind()");
-        close(sock_desc);
-    }
-
-    if (sendto(sock_desc, client_message, strlen(client_message), 0, (const struct sockaddr*) &server_sockaddr, sizeof(server_sockaddr)) < 0)
-    {
-        handle_error("error sendto()");
+        handle_error("client error connect()");
         close(sock_desc);
     }
 
     close(sock_desc);
     
-
     return 0;
 }
