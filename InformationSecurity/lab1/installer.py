@@ -1,23 +1,28 @@
 from sys import platform
 from subprocess import check_output
 import hashlib
-import os
 
 def get_sum():
-    output = check_output("dmedicode | grep -i uuid", shell=True).decode()
-    #hard_uuid = output.split(":")[1][1:-1]
-    #serial_num = check_output("dmidecode -s system-serial-number", shell=True).decode()
-    #check_str = hard_uuid + " " + serial_num
-    #return "39AB53E4-FCF1-4AD5-9BF6-E205DF017B15\n" #hashlib.sha256(check_str.encode('utf-8')).hexdigest()
-
+    if platform == "linux2":
+        hard_uuid = check_output("dmidecode -s system-uuid", shell=True).decode()
+        serial_num = check_output("dmidecode -s system-serial-number", shell=True).decode()
+    elif platform == "win32":
+        hard_uuid = check_output("wmic csproduct get UUID", shell=True).decode()
+        serial_num = check_output("wmic csproduct get IdentifyingNumber", shell=True).decode()
+    else:
+        return ""
+    check_str = hard_uuid + " " + serial_num
+    return hashlib.sha256(check_str.encode('utf-8')).hexdigest()
 
 def check_sum():
     real_key = get_license_key()
-    #if (real_key == get_sum()):
-    #    return True
-    #else:
-    get_sum()
-    return False
+    sum = get_sum()
+
+    if (sum == ""):
+        return -1
+    if (real_key == sum):
+        return 1
+    return 0
 
 def set_license_key(checksum):
     with open("license.key", "r") as license_file:
