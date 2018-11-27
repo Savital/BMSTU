@@ -24,7 +24,7 @@ void file_receive(int sock_desc)
 
     FILE* file_desc = fopen(strcat(name, "_copy"), "w");
     fwrite(buff, sizeof(char), size, file_desc);
-    chmod(strcat(name, "_copy"), 0777);
+    int error = chmod(name, 0777);
     close(file_desc);
 
     memset((char*) buff, 0, max_file_length);
@@ -56,6 +56,13 @@ int main(void)
     server_sockaddr.sin_family = AF_INET;
     server_sockaddr.sin_port = htons(socket_port);
     server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    int opt = 1;
+    if (setsockopt(sock_desc, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+    {
+        handle_error("server error setsockopt()");
+        close(sock_desc);
+    }
 
     if (bind(sock_desc, &server_sockaddr, sizeof(server_sockaddr)) == -1)
     {
