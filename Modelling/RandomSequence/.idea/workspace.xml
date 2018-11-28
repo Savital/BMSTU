@@ -2,28 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ae458e97-8df2-4e4b-8661-f93b7cf336cd" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Distributions/.idea/ModelingDistributions.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../Distributions/.idea/ModelingDistributions.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Distributions/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Distributions/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/activate" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/activate.csh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/activate.fish" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/easy_install" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/easy_install-3.6" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/f2py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/pip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/pip3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/pip3.6" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/pylupdate5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/pyrcc5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/python" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/python3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/python3.6" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/bin/pyuic5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/lib64" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/pip-selfcheck.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Distributions/venv/pyvenv.cfg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -72,8 +51,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1139">
-              <caret line="67" column="13" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="13" />
+            <state relative-caret-position="187">
+              <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="55" selection-end-column="18" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
                 <marker date="1543421270998" expanded="true" signature="344:669" ph="..." />
@@ -206,6 +185,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24973656" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -243,8 +223,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1139">
-          <caret line="67" column="13" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="13" />
+        <state relative-caret-position="187">
+          <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="55" selection-end-column="18" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
             <marker date="1543421270998" expanded="true" signature="344:669" ph="..." />
