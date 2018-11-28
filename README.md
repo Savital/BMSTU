@@ -1,4 +1,5 @@
 # BMSTU
+Repository for BMSTU labs
 ## Modelling
 ## WEB
 ## Computer Networks (+ course work)
