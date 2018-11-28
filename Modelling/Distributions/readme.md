@@ -68,7 +68,7 @@ def showGraphics(self, data):
 
 ![Равномерное распределение функция](UniformCDF.png)
 
-![Экспоненциальное распределение плотность](ExponentialCDF.png)
+![Экспоненциальное распределение плотность](ExponentialPDF.png)
 
 ![Экспоненциальное распределения функция](ExponentialCDF.png)
 
