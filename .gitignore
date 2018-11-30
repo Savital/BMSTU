@@ -56,3 +56,16 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# CV
+InformationSecurity/lab4/rsa.py
+InformationSecurity/lab2/rotor.py
+InformationSecurity/lab2/data.py
+InformationSecurity/lab2/machine.py
+InformationSecurity/lab2/main.py
+InformationSecurity/lab2/plugboard.py
+InformationSecurity/lab3/aes128.py
+InformationSecurity/lab3/main.py
+InformationSecurity/lab3/crypted_qwerty.txt
+InformationSecurity/lab3/decrypted_crypted_qwerty.txt
+InformationSecurity/lab3/qwerty.txt
