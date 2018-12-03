@@ -59,8 +59,10 @@
  Transfer-Encoding:	chunked
  Connection:	keep-alive
  X-XSS-Protection:	1; mode=block; report=https://cspreport.mail.ru/xxssprotection
- X-Content-Type-Options:	nosniff```
+ X-Content-Type-Options:	nosniff
 ```
+
+ ```
 http://ya.ru
  Date:
 Mon, 03 Dec 2018 17:32:38 GMT-26m 37s
@@ -68,8 +70,10 @@ Content-Type:	text/html; charset=utf-8
 ETag:	W/"5c053b38-3077"
 Content-Encoding:	gzip
 X-Content-Type-Options:	nosniff
-Transfer-Encoding:	chunked```
+Transfer-Encoding:	chunked
 ```
+
+ ```
 http://rambler.ru
 Server:	nginx
 Date:
@@ -78,8 +82,10 @@ Content-Type:	text/html
 Content-Length:	162 bytes
 Connection:	keep-alive
 Keep-Alive:	timeout=50
-Location:	https://www.rambler.ru/```
+Location:	https://www.rambler.ru/
 ```
+
+ ```
 https://google.ru
 status:	405
 allow:
@@ -91,8 +97,10 @@ server:	gws
 content-length:	1 kilobytes
 x-xss-protection:	1; mode=block
 x-frame-options:	SAMEORIGIN
-alt-svc:	quic=":443"; ma=2592000; v="44,43,39,35"```
+alt-svc:	quic=":443"; ma=2592000; v="44,43,39,35"
 ```
+
+ ```
 https://github.com
 Server:	GitHub.com
 Date:
@@ -109,15 +117,18 @@ Referrer-Policy:	origin-when-cross-origin, strict-origin-when-cross-origin
 Expect-CT:	max-age=2592000, report-uri="https://api.github.com/_private/browser/errors"
 Content-Security-Policy:	default-src 'none'; base-uri 'self'; block-all-mixed-content; connect-src 'self' uploads.github.com status.github.com collector.githubapp.com api.github.com www.google-analytics.com github-cloud.s3.amazonaws.com github-production-repository-file-5c1aeb.s3.amazonaws.com github-production-upload-manifest-file-7fdce7.s3.amazonaws.com github-production-user-asset-6210df.s3.amazonaws.com; font-src assets-cdn.github.com; form-action 'self' github.com gist.github.com; frame-ancestors 'none'; frame-src render.githubusercontent.com; img-src 'self' data: assets-cdn.github.com media.githubusercontent.com camo.githubusercontent.com identicons.github.com collector.githubapp.com avatars0.githubusercontent.com avatars1.githubusercontent.com avatars2.githubusercontent.com avatars3.githubusercontent.com github-cloud.s3.amazonaws.com; manifest-src 'self'; media-src 'none'; script-src assets-cdn.github.com; style-src 'unsafe-inline' assets-cdn.github.com
 Content-Encoding:	gzip
-X-GitHub-Request-Id:	E5EB:1B15:209AB35:3BC5522:5C056906```
+X-GitHub-Request-Id:	E5EB:1B15:209AB35:3BC5522:5C056906
 ```
+
+ ```
 https://apple.com
 Server:	Apache
 Date:
 Mon, 03 Dec 2018 17:34:18 GMT-27m 17s
 Location:	https://www.apple.com/
 Content-type:	text/html
-Connection:	close```
+Connection:	close
+```
 
  ![head](head.jpg)
 
@@ -130,7 +141,8 @@ Date:
 Mon, 03 Dec 2018 18:15:56 GMT-14s
 Location:	https://www.apple.com/
 Content-type:	text/html
-Connection:	close```
+Connection:	close
+```
 
  ```
  https://www.msn.com/
@@ -140,7 +152,8 @@ Connection:	close```
  Server:	Microsoft-IIS/8.5
  X-Powered-By:	ASP.NET
  Date:
- Mon, 03 Dec 2018 18:16:08 GMT-26s```
+ Mon, 03 Dec 2018 18:16:08 GMT-26s
+ ```
 
  ```
  https://www.msn.com/ru-ru/
@@ -169,7 +182,8 @@ HEAD, GET, OPTIONS
 x-xss-protection:	1
 x-msedge-ref:	Ref A: EE2B20F092C6478AB50D5B70E3F1925D Ref B: STOEDGE0416 Ref C: 2018-12-03T18:57:30Z
 date:
-Mon, 03 Dec 2018 18:57:29 GMT-6m 49s```
+Mon, 03 Dec 2018 18:57:29 GMT-6m 49s
+```
 
 * Запросы GET
 
