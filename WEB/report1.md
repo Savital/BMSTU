@@ -393,3 +393,11 @@ V (обязательно) — используемая версия API. Исп
 
     * VK API test:
     ![avatar](getvk.png)
+
+    * Пост на стене вконтакте посредством vk api
+
+    ```
+    https://api.vk.com/method/wall.post?owner_id=32707548&message=university%20lab%20post%20via%20vk%20api%20esp%204%20%22fsociety%22.&access_token=xxx&v=5.85
+    ```
+
+    ![vkpost](vkpost.jpg)
