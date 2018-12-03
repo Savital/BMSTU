@@ -326,7 +326,7 @@ V (обязательно) — используемая версия API. Исп
  * По документации
     * Список факультетов
     ```
-    https://api.vk.com/method/database.getUniversities?q=%D0%9C%D0%93%D0%A2%D0%A3&count=3&access_token=556b55af6273f448c1adad9fe469281e2adc52929294f2138a5f8c45eebf13b343823550acb6aefe7b9c2&v=5.85
+    https://api.vk.com/method/database.getUniversities?q=%D0%9C%D0%93%D0%A2%D0%A3&count=3&access_token=xxx
     ```
 
     ```
@@ -340,7 +340,7 @@ V (обязательно) — используемая версия API. Исп
     * Факультеты:
 
     ```
- https://api.vk.com/method/database.getFaculties?university_id=250&access_token=556b55af6273f448c1adad9fe469281e2adc52929294f2138a5f8c45eebf13b343823550acb6aefe7b9c2&v=5.85
+ https://api.vk.com/method/database.getFaculties?university_id=250&access_token=xxx
  ```
 
     ```
@@ -348,7 +348,7 @@ V (обязательно) — используемая версия API. Исп
 ```
 
     ```
-https://api.vk.com/method/users.get?users_ids=id37131325&fields=photo_200_orig&access_token=556b55af6273f448c1adad9fe469281e2adc52929294f2138a5f8c45eebf13b343823550acb6aefe7b9c2&v=5.85
+https://api.vk.com/method/users.get?users_ids=id37131325&fields=photo_200_orig&access_token=xxx
 ```
 
     ```
