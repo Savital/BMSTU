@@ -2,21 +2,21 @@ from sys import platform
 from subprocess import check_output
 import hashlib
 
-def get_sum():
+def GetSum():
     if platform == "linux2":
-        hard_uuid = check_output("dmidecode -s system-uuid", shell=True).decode()
-        serial_num = check_output("dmidecode -s system-serial-number", shell=True).decode()
+        hardUUID = check_output("dmidecode -s system-uuid", shell=True).decode()
+        serialNum = check_output("dmidecode -s system-serial-number", shell=True).decode()
     elif platform == "win32":
-        hard_uuid = check_output("wmic csproduct get UUID", shell=True).decode()
-        serial_num = check_output("wmic csproduct get IdentifyingNumber", shell=True).decode()
+        hardUUID = check_output("wmic csproduct get UUID", shell=True).decode()
+        serialNum = check_output("wmic csproduct get IdentifyingNumber", shell=True).decode()
     else:
         return ""
-    check_str = hard_uuid + " " + serial_num
-    return hashlib.sha256(check_str.encode('utf-8')).hexdigest()
+    sumStr = hardUUID + " " + serialNum
+    return hashlib.sha256(sumStr.encode('utf-8')).hexdigest()
 
-def check_sum():
-    real_key = get_license_key()
-    sum = get_sum()
+def VerifySum():
+    real_key = GetLicense()
+    sum = GetSum()
 
     if (sum == ""):
         return -1
@@ -24,15 +24,15 @@ def check_sum():
         return 1
     return 0
 
-def set_license_key(checksum):
-    with open("license.key", "r") as license_file:
+def SetLicense(checksum):
+    with open("license.key", "w") as license_file:
         license_file.write((checksum))
 
-def get_license_key():
+def GetLicense():
     with open("license.key", "r") as license_file:
         return license_file.readline()
 
-def check_license():
-    print(get_sum())
-    print(get_license_key())
-    return check_sum()
+def TestLicense():
+    #print(GetSum())
+    #print(GetLicense())
+    return VerifySum()

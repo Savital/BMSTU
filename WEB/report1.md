@@ -408,6 +408,10 @@ Mon, 03 Dec 2018 19:08:48 GMT-15m 18s
     content-encoding:	gzip
     ```
 
+    ```
+    https://pp.userapi.com/c849520/v849520737/570a8/qGyeVHhqerg.jpg?ava=1
+    ```
+
     * Пост на стене вконтакте посредством vk api
 
     ```
