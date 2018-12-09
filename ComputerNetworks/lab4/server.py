@@ -14,6 +14,14 @@ class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.UI = uic.loadUi("server.ui", self)
+        self.construct()
+
+    def construct(self):
+        self.btnStart.clicked.connect(lambda: onBtnStart(self))
+        self.loggerText.setReadOnly(True)
+
+def onBtnStart(window):
+    window.loggerText.setText("Logout:")
 
 def main():
     app = QApplication(sys.argv)
@@ -21,6 +29,6 @@ def main():
     window.show()
     sys.exit(app.exec_())
 
-
 if __name__ == "__main__":
     main()
+

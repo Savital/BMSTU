@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="205c4f36-f91a-4c0a-b5e5-9afc2daa6a33" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/lab4/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab4/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab4/server.ui" beforeDir="false" afterPath="$PROJECT_DIR$/lab4/server.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab5/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab5/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab6/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab6/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../InformationSecurity/lab1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../InformationSecurity/lab1/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../InformationSecurity/lab2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../InformationSecurity/lab2/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Modelling/Distributions/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Modelling/Distributions/.idea/workspace.xml" afterDir="false" />
@@ -26,33 +30,57 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="2" />
+          <entry key="py" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="2" />
+          <entry key="Python" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="6" />
+          <entry key="py" value="145" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="6" />
+          <entry key="Python" value="145" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lab4/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="38" lean-forward="true" selection-start-line="14" selection-start-column="38" selection-end-line="14" selection-end-column="38" />
+            <state relative-caret-position="468">
+              <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lab5/server.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="578">
+              <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lab6/server.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="536">
+              <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -81,6 +109,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/lab4/server.py" />
+        <option value="$PROJECT_DIR$/lab5/server.py" />
+        <option value="$PROJECT_DIR$/lab6/server.py" />
       </list>
     </option>
   </component>
@@ -121,6 +151,16 @@
               <item name="ComputerNetworks" type="b2602c69:ProjectViewProjectNode" />
               <item name="ComputerNetworks" type="462c0819:PsiDirectoryNode" />
               <item name="lab4" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ComputerNetworks" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ComputerNetworks" type="462c0819:PsiDirectoryNode" />
+              <item name="lab5" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ComputerNetworks" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ComputerNetworks" type="462c0819:PsiDirectoryNode" />
+              <item name="lab6" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -169,11 +209,11 @@
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24973656" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24973656" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" show_stripe_button="false" />
       <window_info anchor="bottom" id="Python Console" />
-      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.329718" />
+      <window_info anchor="bottom" id="Terminal" visible="true" weight="0.329718" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -203,8 +243,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lab4/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="38" lean-forward="true" selection-start-line="14" selection-start-column="38" selection-end-line="14" selection-end-column="38" />
+        <state relative-caret-position="468">
+          <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab5/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lab6/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="536">
+          <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
