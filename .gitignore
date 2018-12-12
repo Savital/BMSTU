@@ -69,3 +69,5 @@ InformationSecurity/lab3/main.py
 InformationSecurity/lab3/crypted_qwerty.txt
 InformationSecurity/lab3/decrypted_crypted_qwerty.txt
 InformationSecurity/lab3/qwerty.txt
+
+WEB/_/*
