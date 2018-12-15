@@ -34,7 +34,7 @@ def http_response(response):
 
 
 def send(request):
-    print("SEND(REQUEST)")
+    print("\nSEND(REQUEST)\n")
     logger.debug("Calling send view from Intro app")
     if request.method == "POST":
         data = request.POST
