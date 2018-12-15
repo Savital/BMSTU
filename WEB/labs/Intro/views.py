@@ -23,13 +23,7 @@ def index(request):
     for app in apps.get_app_configs():
         bookmarks.append(app.verbose_name)
     i = bookmarks.index("Intro")
-    return render(
-        request,
-        './Intro.html',
-        context={'year': year,
-                 'bookmarks': bookmarks[i:],
-                 'active': 'Intro'}
-    )
+    return render(request, './Intro.html', context={'year': year, 'bookmarks': bookmarks[i:], 'active': 'Intro'})
 
 
 def http_response(response):
@@ -40,6 +34,7 @@ def http_response(response):
 
 
 def send(request):
+    print("SEND(REQUEST)")
     logger.debug("Calling send view from Intro app")
     if request.method == "POST":
         data = request.POST

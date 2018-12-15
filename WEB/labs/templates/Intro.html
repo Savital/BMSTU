@@ -1,1 +1,77 @@
-Hello World
+<!DOCTYPE HTML>
+<html>
+<head>
+    {% load static %}
+    <title>Web Development</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="{% static './css/style.css' %}" />
+</head>
+<body>
+{% load static %}
+{% csrf_token %}
+<style>
+	html {
+    	background-image: url({% static './images/df.jpg' %});
+    	background-color: #c7b39b;
+   	}
+</style>
+
+<div align="middle" id="wrapper">
+    <header>
+        <h1>Разработка веб-приложений</h1>
+    </header>
+
+    <nav class="menu">
+        <ul class="top-menu">
+            <li><a href="#lab1">Изучение протокола HTTP</a></li>
+            <li><a href="#lab2">Знакомство с nginx</a></li>
+        </ul>
+    </nav>
+
+    <div id="main">
+        <div class="post featured">
+            <hr/>
+            <header class="major">
+                <h3 id="lab1">Изучение протокола HTTP</h3>
+                <p>Реализация сервера с использованием Django. Сервер предоставляет API с поддержкой следующих запросов: (GET, POST, DELETE, PUT, OPTION, HEAD).</p>
+            </header>
+            <div class="request">
+                <select name="method" id="demo-category">
+                    <option value="1">GET</option>
+                    <option value="2">POST</option>
+                    <option value="3">DELETE</option>
+                    <option value="4">PUT</option>
+                    <option value="5">OPTION</option>
+                    <option value="6">HEAD</option>
+                </select>
+                <input type="text" name="url"  value="http://google.com" placeholder="http://google.com"/>
+                <button id="send" type="submit" onclick="send()">Отправить запрос</button>
+            </div>
+
+            <h2>Response</h2>
+            <div class="box">
+                <textarea name="resp" id="output" name="message" rows="50" cols="100"></textarea>
+            </div>
+
+            <hr/>
+            <header id="lab2" class="major">
+                <h3>Знакомство с nginx:</h3>
+                <p>Оценить изменения качественных показателей работы веб-приложения после добавления фронтенд-сервера</p>
+            </header>
+            <hr/>
+            </article>
+        </div>
+    </div>
+
+    <footer align="middle">
+        <div id="footer">
+            <div id="footer-logo">
+                <p class="copyright">&copy; Savital {% now "Y" %}</p>
+            </div>
+        </div>
+    </footer>
+</div>
+<script src="{% static './js/myscript.js' %}"></script>
+</body>
+</html>
