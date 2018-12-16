@@ -1,29 +1,40 @@
 from django.shortcuts import render
 from django.apps import apps
-from datetime import datetime
 from django.http import JsonResponse, HttpResponse, QueryDict
-from .models import Todo
-from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.utils.datastructures import MultiValueDictKeyError
-from datetime import datetime
+from django.template import Context, loader
+
 from urllib.parse import parse_qs
 from django.views import View
+
 import requests
 import json
 import logging
+from datetime import datetime
+
+from .models import Todo
 
 logger = logging.getLogger(__name__)
 
 def index(request):
-    logger.debug("Calling index view from Intro app")
+    logger.debug("Calling Intro view from Intro app")
     year = datetime.now().year
     bookmarks = []
     for app in apps.get_app_configs():
         bookmarks.append(app.verbose_name)
     i = bookmarks.index("Intro")
     return render(request, './Intro.html', context={'year': year, 'bookmarks': bookmarks[i:], 'active': 'Intro'})
+
+
+def hello2(request):
+    template = loader.get_template("html/Hello.html")
+    return HttpResponse(template.render())
+
+
+def hello3(request):
+    return HttpResponse("<head></head> <body> <h1>Hello, world!</h1> </body>")
 
 
 def http_response(response):
@@ -34,7 +45,6 @@ def http_response(response):
 
 
 def send(request):
-    print("\nSEND(REQUEST)\n")
     logger.debug("Calling send view from Intro app")
     if request.method == "POST":
         data = request.POST
