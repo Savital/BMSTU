@@ -58,6 +58,7 @@ docs/_build/
 target/
 
 # CV
+InformationSecurity/_
 InformationSecurity/lab4/rsa.py
 InformationSecurity/lab2/rotor.py
 InformationSecurity/lab2/data.py
@@ -75,3 +76,5 @@ WEB/_/*
 **/.idea/workspace.xml
 
 Modelling/_
+
+
