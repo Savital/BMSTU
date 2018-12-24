@@ -54,6 +54,67 @@ b.	по /temp  возвращать произвольный контент
 
 ### Реализация
 
+#### Логирование
+
+Необходимо добавить следующий код в setting.py.
+
+Как результат в корне проекта будут созданы два файла логов, соответствующие строкам filename.
+
+```bash
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'longout': {
+            'format': '[%(asctime)s][%(levelname)s:%(name)s:%(lineno)d] %(message)s '
+                      '\n_________________________________________________________\n'
+        },
+        'simple': {
+            'format': '[%(asctime)s][%(levelname)s:%(name)s:%(lineno)d] %(message)s '
+        },
+        'colored': {
+            '()': DjangoColorsFormatter,
+            'format': '[%(asctime)s] - %(levelname)s - %(message)s',
+            'datefmt': '%d/%b/%Y %H:%M:%S',
+        }
+    },
+    'handlers': {
+        'file_db': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'labs-db.log',
+            'formatter': 'longout',
+        },
+        'file_requests': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'labs-requests.log',
+            'formatter': 'simple',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'colored',
+        },
+    },
+    'loggers': {
+        'django.db': {
+            'handlers': ['file_db', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['file_requests', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    }
+}
+```
+
+#### Сервер из лабораторной работы 1
+
+##### Значения времени для страницы, картинки и запросов
 
 |Контент|Время отдачи |
 |---|---|
@@ -66,7 +127,8 @@ b.	по /temp  возвращать произвольный контент
 |API (OPTION)| 51 ms |
 |API (HEAD)| 13 ms |
 
-### Сервер из лабораторной работы 1
+
+##### Apache Benchmark результат
 
 ```bash
 (venv) savital@savital-VM:~/repos/BMSTU/WEB/labs$ ab -c 10 -n 100 http://localhost:8000/
@@ -116,7 +178,9 @@ Percentage of the requests served within a certain time (ms)
 ```
 
 
-### После добавления nginx + uwsgi
+#### После добавления nginx + uwsgi
+
+##### Значения времени для страницы, картинки и запросов
 
 |Контент|Время отдачи |
 |---|---|
@@ -128,6 +192,8 @@ Percentage of the requests served within a certain time (ms)
 |API (PUT)| 36 ms |
 |API (OPTION)| 42 ms |
 |API (HEAD)| 11 ms |
+
+##### Apache Benchmark результат
 
 ```bash
 (venv) savital@savital-VM:~/repos/BMSTU/WEB/labs$ ab -c 10 -n 100 http://localhost:8000/
@@ -175,3 +241,62 @@ Percentage of the requests served within a certain time (ms)
  100%     38 (longest request)
 
 ```
+
+
+Nginx должен быть сконфигурирован с модулем http_stub_status_module
+```bash
+nginx -V 2> & 1 | grep -o с-http_stub_status_module
+```
+
+В конфгурацию nginx вставить:
+```bash
+ location /nginx_status {
+          stub_status on;
+          access_log   off;
+          allow 127.0.0.1;
+          deny all;
+        }
+```
+
+![status](status.jpg)
+
+### Доп задания
+
+1.
+
+Командой создано в корне nginx 2 файла localhost.key|localhost.crt
+
+```bash
+openssl req -x509 -out localhost.crt -keyout localhost.key \
+  -newkey rsa:2048 -nodes -sha256 \
+  -subj '/CN=localhost' -extensions EXT -config <( \
+   printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+```
+
+В labs_nginx.conf
+
+```bash
+    ssl_certificate     localhost.crt;
+    ssl_certificate_key localhost.key;
+    ssl_protocols       TLSv1.2;
+```
+
+
+```bash
+    http2_push_preload on;
+
+    http2_push /static/css/style.css;
+    http2_push /static/images/df.jpg;
+    http2_push /static/images/Lupis.jpg;
+```
+
+Время увеличилось.
+
+
+```bash
+    proxy_hide_header "Content-Type";
+    proxy_hide_header "Date";
+    proxy_hide_header "Set-Cookie";
+    proxy_hide_header "Server";
+```
+

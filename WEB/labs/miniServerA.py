@@ -45,7 +45,7 @@ class SimpleProcessor(BaseHTTPRequestHandler):
             self.wfile.write(b'404 :(')
 
 
-mini = MiniServerA(('localhost', 8003), SimpleProcessor)
+mini = MiniServerA(('localhost', 8004), SimpleProcessor)
 mini.up()
 text = ""
 while (text != "quit"):
