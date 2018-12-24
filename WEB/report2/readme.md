@@ -262,7 +262,6 @@ nginx -V 2> & 1 | grep -o с-http_stub_status_module
 
 ### Доп задания
 
-1.
 
 Командой создано в корне nginx 2 файла localhost.key|localhost.crt
 
