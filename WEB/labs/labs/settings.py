@@ -125,13 +125,13 @@ LOGGING = {
         'file_db': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'debug-db.log',
+            'filename': 'labs-db.log',
             'formatter': 'longout',
         },
         'file_requests': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'debug-requests.log',
+            'filename': 'labs-requests.log',
             'formatter': 'simple',
         },
         'console': {
