@@ -7,7 +7,7 @@ def GetSum():
         hardUUID = check_output("dmidecode -s system-uuid", shell=True).decode()
         serialNum = check_output("dmidecode -s system-serial-number", shell=True).decode()
     elif platform == "win32":
-        hardUUID = check_output("wmic csproduct get UUID", shell=True).decode()
+        hardUUID = check_output("wmic csproduct get UUID", shell=True).decode() 
         serialNum = check_output("wmic csproduct get IdentifyingNumber", shell=True).decode()
     else:
         return ""

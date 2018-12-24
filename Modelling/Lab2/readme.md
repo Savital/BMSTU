@@ -55,7 +55,7 @@ def CalculateEntropy(sequence):
 
 Интерфейс и результаты представлены на рисунке ниже.
 
-![Интерфейс](interface.png)
+![Интерфейс](ads/interface.png)
 
 ## Заключение
 
