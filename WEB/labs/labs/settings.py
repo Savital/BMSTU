@@ -1,4 +1,7 @@
 import os
+import sys
+import logging
+from django.core.management.color import color_style
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -80,11 +83,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # $$$
-import sys
-import logging
-from django.core.management.color import color_style
-
-
 class DjangoColorsFormatter(logging.Formatter):
     def __init__(self, *args, **kwargs):
         super(DjangoColorsFormatter, self).__init__(*args, **kwargs)
