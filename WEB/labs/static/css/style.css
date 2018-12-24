@@ -239,15 +239,6 @@ figure div {
 	color: #29c5e6;
 }
 
-/*team-row*/
-
-.team-row figure {
-	margin-top: 20px;
-}
-
-.team-row figure + figure {
-	margin-left: 43px;
-}
 
 /*footer*/
 footer {
@@ -270,26 +261,22 @@ footer h3 {
 	margin: 0 0 10px 0;
 }
 
-#twitter time a {
-	color: #b4aeae;
-}
-
 footer p {
 	margin: 5px 0;
-}
-
-#twitter {
-	float: left;
-	width: 300px;
-}
-
-#twitter p {
-	padding-right: 15px;
 }
 
 footer a {
 	color: blue;
 }
+
+#footer-logo {
+	float: right;
+	margin-top: 20px;
+	font-size: 10px;
+	text-align: right;
+	color: red;
+}
+
 
 /*sitemap*/
 #sitemap {
@@ -316,45 +303,4 @@ footer a {
 
 #sitemap a:hover {
 	text-decoration: underline;
-}
-
-#social {
-	float: left;
-	margin-left: 20px;
-	width: 130px;
-}
-
-#footer-logo {
-	float: right;
-	margin-top: 20px;
-	font-size: 10px;
-	text-align: right;
-	color: red;
-}
-
-/*social-icons*/
-.social-icons {
-	width: 20px;
-    height: 20px;
-    display: inline-block;
-  }
-.social-icons li {
-  	display:inline-block;
-  	list-style-type:none;
-  	-webkit-user-select:none;
-  	-moz-user-select:none;
-  }
-.social-icons li a {
-  	border-bottom: none;
-  }
-.social-icons li img {
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-}
-.vk {
-	background-position: 0 0;
-}
-.github {
-	background-position: 0 0;
 }

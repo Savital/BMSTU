@@ -30,7 +30,6 @@ $.ajaxSetup({
 
 function send()
 {
-    alert("Request sended!")
     var req_url = $("input[name='url']").val();
 	var req_method = $("select[name='method']").val();
 	$.ajax
