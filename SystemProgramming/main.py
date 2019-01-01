@@ -1,15 +1,11 @@
-# main.py MainWindow launch script
+# main.py launch script
 # Savital https://github.com/Savital
 
-import sys
-from PyQt5.QtWidgets import QApplication
-from views import MainWindow
+from manager import Manager
 
 def main():
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+    controller = Manager()
+    controller.runApp()
+    #Manager.runApp(Manager)
 
 main()
-

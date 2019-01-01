@@ -4,9 +4,16 @@
 import sqlite3
 
 class KeypadMonitoringDB():
+    createTableUsersSQL = """CREATE TABLE IF NOT EXISTS users(name TEXT)"""
+    dropTableUsersSQL = """DROP TABLE IF EXISTS users"""
+    insertUserSQL = """INSERT INTO users VALUES ('testUser')"""
+    deleteUserSQL = """DELETE FROM users WHERE name = 'testUser'"""
     def __init__(self):
-        super(self).__init__()
-        #self.construct()
+        super(KeypadMonitoringDB, self).__init__()
+        self.construct()
+
+    def construct(self):
+        pass
 
     def connect(self):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
@@ -18,21 +25,17 @@ class KeypadMonitoringDB():
 
     # Table Users
     def createTableUsers(self):
-        sql = """CREATE TABLE IF NOT EXISTS users(name TEXT)"""
-        self.cursor.execute(sql)
+        self.cursor.execute(self.createTableUsersSQL)
         self.conn.commit()
 
     def dropTableUsers(self):
-        sql = "'DROP TABLE IF EXISTS users'"
-        self.cursor.execute(sql)
+        self.cursor.execute(self.dropTableUsersSQL)
         self.conn.commit()
 
     def insertUserTest(self):
-        sql = """INSERT INTO users VALUES ('testUser')"""
-        self.cursor.execute(sql)
+        self.cursor.execute(self.insertUserSQL)
         self.conn.commit()
 
     def deleteUserTest(self):
-        sql = "DELETE FROM albums WHERE artist = 'John Doe'"
-        self.cursor.execute(sql)
+        self.cursor.execute(self.deleteUserSQL)
         self.conn.commit()
