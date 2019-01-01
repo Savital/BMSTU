@@ -1,17 +1,9 @@
-print("OS")
+# main.py MainWindow launch script
+# Savital https://github.com/Savital
 
 import sys
-from PyQt5 import uic, QtWidgets, QtGui
-from PyQt5.QtCore import QObject, pyqtSlot, Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QListWidgetItem, QTableWidgetItem
-
-import numpy
-from numpy.linalg.linalg import LinAlgError
-
-class MainWindow(QWidget):
-    def __init__(self):
-        super(MainWindow, self).__init__()
-        self.UI = uic.loadUi("MainForm.ui", self)
+from PyQt5.QtWidgets import QApplication
+from views import MainWindow
 
 def main():
     app = QApplication(sys.argv)
@@ -20,3 +12,4 @@ def main():
     sys.exit(app.exec_())
 
 main()
+
