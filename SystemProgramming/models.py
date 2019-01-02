@@ -32,10 +32,15 @@ class KeypadMonitoringDB():
         self.cursor.execute(self.dropTableUsersSQL)
         self.conn.commit()
 
-    def insertUserTest(self):
+    def selectUsers(self):
+        self.cursor.execute("SELECT * FROM users")
+        results = self.cursor.fetchone()
+        return results
+
+    def insertUser(self):
         self.cursor.execute(self.insertUserSQL)
         self.conn.commit()
 
-    def deleteUserTest(self):
+    def deleteUser(self):
         self.cursor.execute(self.deleteUserSQL)
         self.conn.commit()

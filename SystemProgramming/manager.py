@@ -2,64 +2,109 @@
 # Savital https://github.com/Savital
 
 import sys
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtSql
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtSql import *
 from views import MainWindow
-from models import KeypadMonitoringDB as db
+from models import KeypadMonitoringDB
+from threading import Timer, Thread, Event
+
+class EventTimerGenerator():
+    def __init__(self, t, hFunction):
+        self.t=t
+        self.hFunction = hFunction
+        self.thread = Timer(self.t, self.handle_function)
+
+    def __del__(self):
+        pass
+
+    def handle_function(self):
+        self.hFunction()
+        self.thread = Timer(self.t, self.handle_function)
+        self.thread.start()
+
+    def start(self):
+        self.thread.start()
+
+    def cancel(self):
+        self.thread.cancel()
 
 class Manager(QtCore.QObject):
-    doneMonitoringSignal = QtCore.pyqtSignal()
-    doneAddUserSignal = QtCore.pyqtSignal()
+    doneMonitoringSignal = QtCore.pyqtSignal(list)
+    doneAddUserSignal = QtCore.pyqtSignal(list)
     doneDeleteUserSignal = QtCore.pyqtSignal()
     doneClearLogSignal = QtCore.pyqtSignal()
+    refreshDataSignal = QtCore.pyqtSignal()
+
     def __init__(self):
         super(Manager, self).__init__()
         self.construct()
+        self.timer = EventTimerGenerator(0.01, self.refreshData)
+        self.timer.start()
+
+    def __del__(self):
+        print("Manager.del")
+        self.db.disconnect()
 
     def construct(self):
-        pass
+        self.db = KeypadMonitoringDB()
+        self.db.connect()
+        self.users = self.db.selectUsers()
+        self.monitoringFlag = False
 
     def connects(self):
         self.window.monitoringSignal.connect(self.monitoring)
-        self.window.addUserSignal.connect(self.AddUser)
-        self.window.deleteUserSignal.connect(self.DeleteUser)
-        self.window.clearLogSignal.connect(self.ClearLog)
+        self.window.addUserSignal.connect(self.addUser)
+        self.window.deleteUserSignal.connect(self.deleteUser)
+        self.window.clearLogSignal.connect(self.clearLog)
 
-        self.doneMonitoringSignal.connect(self.window.onMonitoringRevertSignal)
-        self.doneAddUserSignal.connect(self.window.onAddUserRevertSignal)
-        self.doneDeleteUserSignal.connect(self.window.onDeleteUserRevertSignal)
-        self.doneClearLogSignal.connect(self.window.onClearLogRevertSignal)
+        self.doneMonitoringSignal.connect(self.window.onMonitoringSignalReverted)
+        self.doneAddUserSignal.connect(self.window.onAddUserSignalReverted)
+        self.doneDeleteUserSignal.connect(self.window.onDeleteUserSignalReverted)
+        self.doneClearLogSignal.connect(self.window.onClearLogSignalReverted)
+
+        #Close when the thread finishes (normally)
+        self.window.closeSignal.connect(self.close)
+        #Close when the thread terminated (TODO)
 
     def runApp(self):
         self.app = QApplication(sys.argv)
-        self.window = MainWindow()
+        self.window = MainWindow(self.users)
         self.window.show()
         self.connects()
         sys.exit(self.app.exec_())
+        del self.window
 
-    def testDB(self):
-        db.connect(db)
-        db.createTableUsers(db)
-        db.insertUserTest(db)
-        #db.deleteUserTest(db)
-        db.disconnect(db)
+    def refreshData(self):
+        self.refreshDataSignal.emit()
 
     @QtCore.pyqtSlot()
     def monitoring(self):
-        print("Manager.Monitoring()")
-        self.doneMonitoringSignal.emit()
+        self.monitoringFlag = not self.monitoringFlag
+        self.doneMonitoringSignal.emit([self.monitoringFlag])
 
     @QtCore.pyqtSlot()
-    def AddUser(self):
-        print("Manager.AddUser()")
-        self.doneAddUserSignal.emit()
+    def addUser(self):
+        # Manager.AddUser() TODO
+        self.doneAddUserSignal.emit([True])
 
     @QtCore.pyqtSlot()
-    def DeleteUser(self):
-        print("Manager.DeleteUser()")
+    def deleteUser(self):
+        print("Manager.DeleteUser()") #TODO
         self.doneDeleteUserSignal.emit()
 
     @QtCore.pyqtSlot()
-    def ClearLog(self):
-        print("Manager.ClearLog()")
+    def clearLog(self):
+        print("Manager.ClearLog()") #TODO
         self.doneClearLogSignal.emit()
+
+    @QtCore.pyqtSlot()
+    def close(self):
+        self.timer.cancel()
+
+    #def testDB(self):
+        #self.db.connect()
+        #self.db.createTableUsers()
+        #self.db.insertUser()
+        #self.db.deleteUser()
+        #self.db.disconnect()
