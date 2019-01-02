@@ -32,7 +32,7 @@ class EventTimerGenerator():
 class Manager(QtCore.QObject):
     doneMonitoringSignal = QtCore.pyqtSignal(list)
     doneAddUserSignal = QtCore.pyqtSignal(list)
-    doneDeleteUserSignal = QtCore.pyqtSignal()
+    doneDeleteUserSignal = QtCore.pyqtSignal(list)
     doneClearLogSignal = QtCore.pyqtSignal()
     refreshDataSignal = QtCore.pyqtSignal()
 
@@ -73,7 +73,6 @@ class Manager(QtCore.QObject):
         self.window.show()
         self.connects()
         sys.exit(self.app.exec_())
-        del self.window
 
     def refreshData(self):
         self.refreshDataSignal.emit()
@@ -83,15 +82,23 @@ class Manager(QtCore.QObject):
         self.monitoringFlag = not self.monitoringFlag
         self.doneMonitoringSignal.emit([self.monitoringFlag])
 
-    @QtCore.pyqtSlot()
-    def addUser(self):
-        # Manager.AddUser() TODO
-        self.doneAddUserSignal.emit([True])
+    @QtCore.pyqtSlot(list)
+    def addUser(self, list):
+        names = self.db.selectUsersByName(list[0])
+        if names == None:
+            self.db.insertUser(list[0])
+            self.doneAddUserSignal.emit([True, list[0]])
+        else:
+            self.doneAddUserSignal.emit([False, list[0]])
 
-    @QtCore.pyqtSlot()
-    def deleteUser(self):
-        print("Manager.DeleteUser()") #TODO
-        self.doneDeleteUserSignal.emit()
+    @QtCore.pyqtSlot(list)
+    def deleteUser(self, list):
+        names = self.db.selectUsersByName(list[0])
+        if names != None:
+            self.doneDeleteUserSignal.emit([True, list[0]])
+            self.db.deleteUser(list[0])
+        else:
+            self.doneDeleteUserSignal.emit([False, list[0]])
 
     @QtCore.pyqtSlot()
     def clearLog(self):
@@ -101,10 +108,3 @@ class Manager(QtCore.QObject):
     @QtCore.pyqtSlot()
     def close(self):
         self.timer.cancel()
-
-    #def testDB(self):
-        #self.db.connect()
-        #self.db.createTableUsers()
-        #self.db.insertUser()
-        #self.db.deleteUser()
-        #self.db.disconnect()

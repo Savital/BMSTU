@@ -35,10 +35,17 @@
        <item row="1" column="0">
         <layout class="QFormLayout" name="formLayout_2">
          <item row="0" column="1">
-          <widget class="QComboBox" name="comboUser"/>
+          <widget class="QComboBox" name="comboUser">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="1" column="1">
           <widget class="QPushButton" name="buttonMonitoring">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="text">
             <string>Включить мониторинг действий</string>
            </property>
