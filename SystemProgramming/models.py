@@ -3,6 +3,7 @@
 
 import sqlite3
 
+# KeypadMonitoringDB is model, wraps the sqlite3 DB
 class KeypadMonitoringDB():
     createTableUsersSQL = """CREATE TABLE IF NOT EXISTS users(name TEXT)"""
     dropTableUsersSQL = """DROP TABLE IF EXISTS users"""
@@ -51,3 +52,5 @@ class KeypadMonitoringDB():
     def deleteUser(self, name):
         self.cursor.execute(self.deleteUserSQL.format(name))
         self.conn.commit()
+
+    # TABLE FOR USER STAT, UPDATE, ADD, DELETE TODO

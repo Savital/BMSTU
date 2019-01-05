@@ -8,16 +8,19 @@ from PyQt5.QtSql import *
 from PyQt5.QtCore import *
 import string
 
+# MainWindow is view
 class MainWindow(QWidget):
     monitoringSignal = QtCore.pyqtSignal()
     addUserSignal = QtCore.pyqtSignal(list)
     deleteUserSignal = QtCore.pyqtSignal(list)
     clearLogSignal = QtCore.pyqtSignal()
     closeSignal = QtCore.pyqtSignal()
+    changeUserStateSignal = QtCore.pyqtSignal(list)
 
     def __init__(self, users):
         super(MainWindow, self).__init__()
         self.UI = uic.loadUi("MainForm.ui", self)
+        self.setWindowIcon(QtGui.QIcon('icon.png'))
 
         for item in users:
             for name in item:
@@ -73,6 +76,28 @@ class MainWindow(QWidget):
     @QtCore.pyqtSlot()
     def onClearLogSignalReverted(self):
         pass #Revert signal ClearLog TODO
+
+    @QtCore.pyqtSlot()
+    def onComboUserChanged(self):
+        self.changeUserStateSignal.emit([self.comboUser.currentText()])
+
+    @QtCore.pyqtSlot(list)
+    def onRefreshSignalReverted(self, list):
+        self.keyDelay.setText(str(list[0]))
+        self.keySearch.setText(str(list[1]))
+        self.keyNumber.setText(str(list[2]))
+        self.keyCombines.setText(str(list[3]))
+        self.keyFunctionals.setText(str(list[4]))
+        print(list)
+
+    @QtCore.pyqtSlot(list)
+    def onChangeUserStateSignalReverted(self, list):
+        self.keyDelay.setText(str(list[0]))
+        self.keySearch.setText(str(list[1]))
+        self.keyNumber.setText(str(list[2]))
+        self.keyCombines.setText(str(list[3]))
+        self.keyFunctionals.setText(str(list[4]))
+        print(list)
 
 def onButtonMonitoringClick(window):
     window.monitoringSignal.emit()
