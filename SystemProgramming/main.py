@@ -8,7 +8,7 @@ def main():
     #controller = Manager()
     #controller.runApp()
     #Manager.runApp(Manager)
-    dataReader = DataReader("sample.txt")
+    dataReader = DataReader("/proc/keymonitoring")
     dataReader.get()
 
 main()
