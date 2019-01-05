@@ -2,10 +2,13 @@
 # Savital https://github.com/Savital
 
 from manager import Manager
+from reader import DataReader
 
 def main():
-    controller = Manager()
-    controller.runApp()
+    #controller = Manager()
+    #controller.runApp()
     #Manager.runApp(Manager)
+    dataReader = DataReader("sample.txt")
+    dataReader.get()
 
 main()
