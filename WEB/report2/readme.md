@@ -18,6 +18,8 @@ uwsgi --socket labs.sock --wsgi-file wsgi.py --chmod-socket=666
 
 uwsgi --http :8000 --wsgi-file wsgi.py
 
+uwsgi --ini conf/labs_uwsgi.ini
+
 sudo nginx -V 2>&1 | grep -o with-http_stub_status_module
 
 ```
