@@ -1,0 +1,1 @@
+cmd_/home/savital/repos/BMSTU/SystemProgramming/lkm/keymonitoring.ko := ld -r -m elf_x86_64 -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /home/savital/repos/BMSTU/SystemProgramming/lkm/keymonitoring.ko /home/savital/repos/BMSTU/SystemProgramming/lkm/keymonitoring.o /home/savital/repos/BMSTU/SystemProgramming/lkm/keymonitoring.mod.o ;  true

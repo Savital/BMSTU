@@ -8,6 +8,8 @@ from PyQt5.QtSql import *
 from views import MainWindow
 from models import KeypadMonitoringDB
 from threading import Timer, Thread, Event
+from reader import DataReader
+import pygame
 
 # Runs function hFunction on clock, when state is not zero
 class RefreshEventGenerator():
@@ -135,6 +137,12 @@ class Manager(QtCore.QObject):
         self.doneChangeUserStateSignal.emit([1.0, 1.0, 1.0, 1.0, 1.0, self.stats])
 
     def refreshData(self): #TODO
+        dataReader = DataReader("/proc/keymonitoring")
+        list = dataReader.get()
+        print(list)
+        #self.db.insertData(self.user, list)
         #results = self.db.selectData(self.user)
         self.stats = "xxx"
         self.refreshDataSignal.emit([1.0, 1.0, 1.0, 1.0, 1.0, self.stats])
+        ch = chr(44)
+        print(ch)

@@ -13,9 +13,22 @@ class DataReader():
         pass
 
     def get(self):
+        results = []
         f = open(self.name, 'r')
-        text = f.read()
-        print(text)
-        #for line in f:
-        #    print(line)
+        for line in f:
+            list = []
+            i = 0
+            num = ""
+            while i < len(line):
+                if line[i] == ' ':
+                    list.append(num)
+                    num = ""
+                if line[i] == '\n':
+                    list.append(num)
+                    break
+                num += line[i]
+                i += 1
+            results.append(list)
         f.close()
+
+        return results

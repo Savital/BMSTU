@@ -88,7 +88,7 @@ class MainWindow(QWidget):
         self.keyNumber.setText(str(list[2]))
         self.keyCombines.setText(str(list[3]))
         self.keyFunctionals.setText(str(list[4]))
-        print(list)
+        #print(list)
 
     @QtCore.pyqtSlot(list)
     def onChangeUserStateSignalReverted(self, list):
@@ -97,7 +97,7 @@ class MainWindow(QWidget):
         self.keyNumber.setText(str(list[2]))
         self.keyCombines.setText(str(list[3]))
         self.keyFunctionals.setText(str(list[4]))
-        print(list)
+        #print(list)
 
 def onButtonMonitoringClick(window):
     window.monitoringSignal.emit()
