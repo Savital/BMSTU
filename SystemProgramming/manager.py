@@ -42,12 +42,15 @@ class RefreshEventGenerator():
 
 # Controller, handles signals between view and model
 class Manager(QtCore.QObject):
+    doneInitSignal = QtCore.pyqtSignal(list)
+    doneChangeUserStateSignal = QtCore.pyqtSignal(list)
+
     doneMonitoringSignal = QtCore.pyqtSignal(list)
     doneAddUserSignal = QtCore.pyqtSignal(list)
     doneDeleteUserSignal = QtCore.pyqtSignal(list)
     doneClearLogSignal = QtCore.pyqtSignal()
+
     refreshDataSignal = QtCore.pyqtSignal(list)
-    doneChangeUserStateSignal = QtCore.pyqtSignal(list)
 
     def __init__(self):
         super(Manager, self).__init__()
@@ -56,18 +59,23 @@ class Manager(QtCore.QObject):
         self.timer.start()
 
     def __del__(self):
-        self.db.disconnect()
+        pass
 
     def construct(self):
         self.db = KeypadMonitoringDB()
-        self.db.connect()
-        self.users = self.db.selectUsers()
-        self.user = ""
-        if len(self.users):
-            self.user = self.users[0][0]
+        self.db.createTableUsers()
+        self.db.createTableLog()
+
         self.monitoringFlag = False
 
     def connects(self):
+        self.window.initWindowSignal.connect(self.initWindow)
+        self.doneInitSignal.connect(self.window.onInitWindowSignalReverted)
+
+        self.window.changeUserStateSignal.connect(self.changeUserState)
+        self.doneChangeUserStateSignal.connect(self.window.onChangeUserStateSignalReverted)
+        self.window.comboUser.currentTextChanged.connect(self.window.onComboUserChanged)
+
         self.window.monitoringSignal.connect(self.monitoring)
         self.window.addUserSignal.connect(self.addUser)
         self.window.deleteUserSignal.connect(self.deleteUser)
@@ -80,23 +88,41 @@ class Manager(QtCore.QObject):
 
         #Close when the thread finishes (normally)
         self.window.closeSignal.connect(self.close)
-        self.window.comboUser.currentTextChanged.connect(self.window.onComboUserChanged)
-        self.window.changeUserStateSignal.connect(self.changeUserState)
         #Close when the thread terminated (TODO)
+
         self.refreshDataSignal.connect(self.window.onRefreshSignalReverted)
-        self.doneChangeUserStateSignal.connect(self.window.onChangeUserStateSignalReverted)
+
 
     def runApp(self):
         self.app = QApplication(sys.argv)
-        self.window = MainWindow(self.users)
-        self.window.show()
+        self.window = MainWindow()
         self.connects()
+        self.window.show()
         sys.exit(self.app.exec_())
+
+    @QtCore.pyqtSlot()
+    def initWindow(self):
+        self.users = self.db.selectUsers()
+        self.user = ""
+        if len(self.users):
+            self.user = self.users[0][0]
+
+        self.doneInitSignal.emit([self.users])
+
+    @QtCore.pyqtSlot(list)
+    def changeUserState(self, list):
+        self.user = list[0]
+
+        self.log = self.db.selectLogByName(self.user)
+        self.stats = self.formStats()
+        self.doneChangeUserStateSignal.emit([self.stats, self.log])
 
     @QtCore.pyqtSlot()
     def monitoring(self):
         self.monitoringFlag = not self.monitoringFlag
         if self.monitoringFlag:
+            dataReader = DataReader("/proc/keymonitoring")
+            list = dataReader.get()
             self.timer.runF()
         else:
             self.timer.stopF()
@@ -123,26 +149,61 @@ class Manager(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def clearLog(self):
-        print("Manager.ClearLog()") #TODO
+        self.db.deleteLogByName(self.user)
         self.doneClearLogSignal.emit()
 
     @QtCore.pyqtSlot()
     def close(self):
         self.timer.cancel()
 
-    @QtCore.pyqtSlot(list)
-    def changeUserState(self, list): #TODO
-        self.user = list[0]
-        self.stats = "xxx"
-        self.doneChangeUserStateSignal.emit([1.0, 1.0, 1.0, 1.0, 1.0, self.stats])
+    def averageDowntime(self, list):
+        average = 0.0
+        for item in self.log:
+            average += item[2]
+        average /= len(self.log)
+        return average
 
-    def refreshData(self): #TODO
+    def averageSearchtime(self, list):
+        average = 0.0
+        for item in self.log:
+            average += item[3]
+        average /= len(self.log)
+        return average
+
+    def inputSpeed(self, list):
+        sum = 0
+        for item in self.log:
+            sum += item[2] + item[3]
+        return 1000 * len(self.log) / (sum)
+
+    def formStats(self):
+        list = []
+        if len(self.log) == 0:
+            list.append(0.0)
+            list.append(0.0)
+            list.append(0.0)
+            list.append(0.0)
+            list.append(0.0)
+        elif len(self.log[0]) == 1:
+            list.append(self.log[0][2])
+            list.append(self.log[0][3])
+            list.append(1 / (self.log[0][2] + self.log[0][3]))
+            list.append(0.0)
+            list.append(0.0)
+        else:
+            list.append(self.averageDowntime(self.log))
+            list.append(self.averageSearchtime(self.log))
+            list.append(self.inputSpeed(self.log))
+            list.append(0.0)
+            list.append(0.0)
+        return list
+
+    def refreshData(self):
         dataReader = DataReader("/proc/keymonitoring")
         list = dataReader.get()
-        print(list)
-        #self.db.insertData(self.user, list)
-        #results = self.db.selectData(self.user)
-        self.stats = "xxx"
-        self.refreshDataSignal.emit([1.0, 1.0, 1.0, 1.0, 1.0, self.stats])
-        ch = chr(44)
-        print(ch)
+        if list:
+            self.db.insertLogByName(self.user, list)
+
+        self.log = self.db.selectLogByName(self.user)
+        self.stats = self.formStats()
+        self.refreshDataSignal.emit([self.stats, self.log])

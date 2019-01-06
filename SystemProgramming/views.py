@@ -10,26 +10,25 @@ import string
 
 # MainWindow is view
 class MainWindow(QWidget):
+    initWindowSignal = QtCore.pyqtSignal()
+    changeUserStateSignal = QtCore.pyqtSignal(list)
+
     monitoringSignal = QtCore.pyqtSignal()
     addUserSignal = QtCore.pyqtSignal(list)
     deleteUserSignal = QtCore.pyqtSignal(list)
     clearLogSignal = QtCore.pyqtSignal()
-    closeSignal = QtCore.pyqtSignal()
-    changeUserStateSignal = QtCore.pyqtSignal(list)
 
-    def __init__(self, users):
+    closeSignal = QtCore.pyqtSignal()
+
+    def __init__(self):
         super(MainWindow, self).__init__()
         self.UI = uic.loadUi("MainForm.ui", self)
         self.setWindowIcon(QtGui.QIcon('icon.png'))
 
-        for item in users:
-            for name in item:
-                self.comboUser.addItem(name)
-
         self.construct()
 
     def __del__(self):
-        pass #MainWindow.del TODO
+        pass
 
     def construct(self):
         self.buttonMonitoring.clicked.connect(lambda: onButtonMonitoringClick(self))
@@ -37,7 +36,7 @@ class MainWindow(QWidget):
         self.buttonDelete.clicked.connect(lambda: onButtonDeleteUserClick(self))
         self.buttonClear.clicked.connect(lambda: onButtonClearLogClick(self))
 
-        self.buttonMonitoring.setStyleSheet("background-color: rgb(255, 85, 0)")
+        self.buttonMonitoring.setStyleSheet("background-color: qlineargradient(spread:pad, x1:0.0568182, y1:0.126, x2:0.75, y2:0.227, stop:0.0738636 rgba(0, 255, 0, 255), stop:0.840909 rgba(0, 136, 0, 255));\n")
 
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Сообщение', "Вы точно хотите выйти?", QMessageBox.Yes, QMessageBox.No)
@@ -48,14 +47,45 @@ class MainWindow(QWidget):
         else:
             event.ignore()
 
+    def showEvent(self, QShowEvent):
+        self.initWindowSignal.emit()
+
+    @QtCore.pyqtSlot(list)
+    def onInitWindowSignalReverted(self, list):
+        for item in list[0]:
+            for name in item:
+                self.comboUser.addItem(name)
+
+    @QtCore.pyqtSlot()
+    def onComboUserChanged(self):
+        self.changeUserStateSignal.emit([self.comboUser.currentText()])
+
+    @QtCore.pyqtSlot(list)
+    def onChangeUserStateSignalReverted(self, list):
+        self.keyDelay.setText(str(list[0][0]))
+        self.keySearch.setText(str(list[0][1]))
+        self.keyNumber.setText(str(list[0][2]))
+        self.keyCombines.setText(str(list[0][3]))
+        self.keyFunctionals.setText(str(list[0][4]))
+
+        if len(list[1]) == 0:
+            self.textLogging.setText("Log is empty")
+        elif len(list[1][0]) == 1:
+            self.textLogging.setText(str(list[1]))
+        else:
+            text = ""
+            for item in list[1]:
+                text += str(item) + "\n"
+            self.textLogging.setText(text)
+
     @QtCore.pyqtSlot(list)
     def onMonitoringSignalReverted(self, list):
         if (list[0]):
-            self.buttonMonitoring.setStyleSheet("background-color: qlineargradient(spread:pad, x1:0.0568182, y1:0.126, x2:0.75, y2:0.227, stop:0.0738636 rgba(0, 255, 0, 255), stop:0.840909 rgba(0, 136, 0, 255));\n")
+            self.buttonMonitoring.setStyleSheet("background-color: rgb(255, 85, 0)")
             self.buttonMonitoring.setText("Выключить мониторинг действий")
             self.comboUser.setEnabled(False)
         else:
-            self.buttonMonitoring.setStyleSheet("background-color: rgb(255, 85, 0)")
+            self.buttonMonitoring.setStyleSheet("background-color: qlineargradient(spread:pad, x1:0.0568182, y1:0.126, x2:0.75, y2:0.227, stop:0.0738636 rgba(0, 255, 0, 255), stop:0.840909 rgba(0, 136, 0, 255));\n")
             self.buttonMonitoring.setText("Включить мониторинг действий")
             self.comboUser.setEnabled(True)
 
@@ -75,29 +105,25 @@ class MainWindow(QWidget):
 
     @QtCore.pyqtSlot()
     def onClearLogSignalReverted(self):
-        pass #Revert signal ClearLog TODO
-
-    @QtCore.pyqtSlot()
-    def onComboUserChanged(self):
-        self.changeUserStateSignal.emit([self.comboUser.currentText()])
+        self.textLogging.setText("Log is empty")
 
     @QtCore.pyqtSlot(list)
     def onRefreshSignalReverted(self, list):
-        self.keyDelay.setText(str(list[0]))
-        self.keySearch.setText(str(list[1]))
-        self.keyNumber.setText(str(list[2]))
-        self.keyCombines.setText(str(list[3]))
-        self.keyFunctionals.setText(str(list[4]))
-        #print(list)
+        self.keyDelay.setText(str(list[0][0]))
+        self.keySearch.setText(str(list[0][1]))
+        self.keyNumber.setText(str(list[0][2]))
+        self.keyCombines.setText(str(list[0][3]))
+        self.keyFunctionals.setText(str(list[0][4]))
 
-    @QtCore.pyqtSlot(list)
-    def onChangeUserStateSignalReverted(self, list):
-        self.keyDelay.setText(str(list[0]))
-        self.keySearch.setText(str(list[1]))
-        self.keyNumber.setText(str(list[2]))
-        self.keyCombines.setText(str(list[3]))
-        self.keyFunctionals.setText(str(list[4]))
-        #print(list)
+        if len(list[1]) == 0:
+            self.textLogging.setText("Log is empty")
+        elif len(list[1][0]) == 1:
+            self.textLogging.setText(str(list[1]))
+        else:
+            text = ""
+            for item in list[1]:
+                text += str(item) + "\n"
+            self.textLogging.setText(text)
 
 def onButtonMonitoringClick(window):
     window.monitoringSignal.emit()
