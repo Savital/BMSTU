@@ -9,8 +9,9 @@
 #include <linux/fs_struct.h>
 #include <linux/uaccess.h>
 
-#define keystore_ITEMS_MAX 100
-#define keystore_ITEM_MAX_SIZE 80
+#define KEYSTORE_ITEMS_MAX 100
+#define KEYSTORE_ITEM_MAX_SIZE 80
+#define SUCCESS 0
 
 #define DRIVER_VERSION "v1.0"
 #define DRIVER_AUTHOR "Savital"
@@ -20,20 +21,24 @@ MODULE_AUTHOR(DRIVER_AUTHOR);
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_LICENSE("GPL");
 
-static int current_keystore;
-static int current_keystore_index;
-static unsigned char previous_scancode;
+static int keystore_index;
+static unsigned int comb_number;
+static unsigned long search_time;
 char *msg;
-bool opened;
 struct proc_dir_entry *proc_file;
-unsigned long search_time;
 static irqreturn_t irq_handler(int irq, void *dev_id);
 static void workqueue_function(struct work_struct *work);
 static struct workqueue_struct *queue = NULL;
-size_t isShift = 0;
-size_t isCapsLock = 0;
-size_t isWin = 0;
-size_t isRU = 0;
+
+static size_t isShift = 0;
+static size_t isCapsLock = 0;
+static size_t isWin = 0;
+static size_t isRU = 0;
+
+static unsigned char scancode = 0;
+static unsigned long tmp = 0;
+static int result = 0;
+static int i = 0;
 
 char* lowerKbdus[128] =
 {
@@ -87,7 +92,7 @@ char* upperKbdusRU[128] =
     0, 0, "WinKey"	/* All other keys are undefined */
 };
 
-unsigned long mtime(void) // TODO
+unsigned long mtime(void)
 {
 	struct timespec t;
 	getnstimeofday(&t);
@@ -97,12 +102,13 @@ unsigned long mtime(void) // TODO
 
 struct keystore_item 
 {
-	int keystore_code;
+	int scancode;
 	int state;
+	int comb_number;
 	unsigned long long down_time;
 	unsigned long long search_time;
 	struct keystore_item *next;
-} *keystore_table;
+} *keystore;
 
 struct log_queue 
 {
@@ -126,13 +132,14 @@ int queue_isempty(struct log_queue *q)
 		return 0;
 }
 
-void insert_in_queue(struct log_queue *q, int code, int state, unsigned long time, unsigned long time_up)
+void insert_in_queue(struct log_queue *q, int code, int state, int comb_number, unsigned long time, unsigned long time_up)
 {
 	if((q->rear == NULL) && (q->frnt == NULL)) 
 	{
     	q->rear = kmalloc(sizeof(struct keystore_item), GFP_ATOMIC);
-		q->rear->keystore_code = code;
+		q->rear->scancode = code;
 		q->rear->state = state;
+		q->rear->comb_number = comb_number;
 		q->rear->down_time = time;
 		q->rear->search_time = time_up;
 		q->rear->next = NULL;
@@ -142,8 +149,9 @@ void insert_in_queue(struct log_queue *q, int code, int state, unsigned long tim
 	{
 		struct keystore_item* temp = kmalloc(sizeof(struct keystore_item), GFP_ATOMIC);
 		q->rear->next = temp;
-    	temp->keystore_code = code;
+    	temp->scancode = code;
     	temp->state = state;
+    	temp->comb_number = comb_number;
 		temp->down_time = time;
 		temp->search_time = time_up;
 		temp->next = NULL;
@@ -155,8 +163,9 @@ struct keystore_item remove_from_queue(struct log_queue *q)
 {
 	struct keystore_item ret;
 	struct keystore_item *temp;
-	ret.keystore_code = -1;
+	ret.scancode = -1;
 	ret.state = 0;
+	ret.comb_number = -1;
 	ret.down_time = 0;
 	ret.search_time = 0;
 
@@ -164,8 +173,9 @@ struct keystore_item remove_from_queue(struct log_queue *q)
 	{
 		return ret;
 	}
-	ret.keystore_code = q->frnt->keystore_code;
+	ret.scancode = q->frnt->scancode;
 	ret.state = q->frnt->state;
+	ret.comb_number = q->frnt->comb_number;
 	ret.down_time = q->frnt->down_time;
 	ret.search_time = q->frnt->search_time;
 
@@ -179,9 +189,9 @@ struct keystore_item remove_from_queue(struct log_queue *q)
 static int find_key_rt(struct keystore_item *rt, int key) 
 {
 	int i, ret_idx = -1;
-	for(i = 0; i < keystore_ITEMS_MAX; i++)
+	for(i = 0; i < KEYSTORE_ITEMS_MAX; i++)
 	{
-		if (rt[i].keystore_code == key) 
+		if (rt[i].scancode == key)
 		{
 			ret_idx = i;
 			break;
@@ -208,105 +218,126 @@ static irqreturn_t irq_handler(int irq, void *dev_id)
 
 static void workqueue_function(struct work_struct *work)
 {
-	unsigned char scancode = inb(0x60);
+	scancode = inb(0x60);
 	if (scancode & 0x80) // if released
 	{
 		scancode &= 0x7F; // subtract 128
-		if (current_keystore != 0) 
-		{
-		    // LeftShift || RightShift
-		    if (scancode == 0x2A || scancode == 0x36)
-		    {
-			    isShift = 0;
-		    }
-		    // Win
-		    if (scancode == 0x5B)
-		    {
-		        isWin = 0;
-		    }
-		    // En || Ru layouts
-		    if (isWin && (scancode == 0x39))
-		    {
-		        if (isRU)
-		            isRU = 0;
-		        else
-		            isRU = 1;
-		    }
 
-			unsigned long tmp;
-			tmp = mtime();
+        switch (scancode)
+		{
+		    case 0x5B: // Win
+		        isWin = 0;
+		        break;
+		    case 0x2A: // LeftShift
+		        isShift = 0;
+		        break;
+		    case  0x36: // RightShift
+		        isShift = 0;
+		        break;
+		    case 0x39:
+		        if (isWin)
+		            if (isRU)
+		                isRU = 0;
+		            else
+		                isRU = 1;
+		        break;
+		    case 0x3A: // CapsLock
+		        switch (isCapsLock)
+		        {
+		            case 1:
+		                isCapsLock = 3;
+		            break;
+		            case 5:
+		                isCapsLock = 0;
+		            break;
+		            default:
+		            break;
+		        }
+		        break;
+		    default:
+		        break;
+		}
 			
-			current_keystore_index = find_key_rt(keystore_table, scancode);
-			if (current_keystore_index != -1) 
-			{
-				current_keystore--;
-				tmp = (tmp - keystore_table[current_keystore_index].down_time);
-				insert_in_queue(log_queue_table, scancode, keystore_table[current_keystore_index].state, tmp, keystore_table[current_keystore_index].search_time);
-				keystore_table[current_keystore_index].keystore_code = -1;
-				keystore_table[current_keystore_index].down_time = 0;
-			}
+		keystore_index = find_key_rt(keystore, scancode);
+		if (keystore_index != -1)
+		{
+			tmp = (mtime() - keystore[keystore_index].down_time);
+			tmp = tmp ? tmp : 1;
+			insert_in_queue(log_queue_table, scancode, keystore[keystore_index].state, keystore[keystore_index].comb_number, tmp, keystore[keystore_index].search_time);
+
+		    keystore[keystore_index].scancode = -1;
+		    keystore[keystore_index].state = 0;
+		    keystore[keystore_index].comb_number = -1;
+		    keystore[keystore_index].down_time = 0;
+		    keystore[keystore_index].search_time = 0;
 		}
 	}
 	else // If pressed
 	{
-		if (current_keystore < keystore_ITEMS_MAX) 
+		tmp = mtime();
+
+        comb_number++;
+
+		keystore_index = find_key_rt(keystore, -1);
+		if (keystore_index != -1)
 		{
-			unsigned long tmp;
-			tmp = mtime();	
+		    switch (scancode)
+		    {
+		        case 0x5B: // Win
+		            isWin = 1;
+		            break;
+		        case 0x2A: // LeftShift
+		            isShift = 1;
+		            break;
+		        case  0x36: // RightShift
+		            isShift = 1;
+		            break;
+		        case 0x3A: // CapsLock
+		            switch (isCapsLock)
+		            {
+		                case 3:
+		                    isCapsLock = 5;
+		                break;
+		                case 0:
+		                    isCapsLock = 1;
+		                break;
+		                default:
+		                break;
+		            }
+		            break;
+		        default:
+		            break;
+		    }
 
-			current_keystore_index = find_key_rt(keystore_table, -1);
-			if (current_keystore_index != -1) 
-			{
-			    // Win
-                if (scancode == 0x5B)
-                {
-                    isWin = 1;
-                }
-                // LeftShift || RightShift
-			    if (scancode == 0x2A || scancode == 0x36)
-		        {
-			        isShift = 1;
-		        }
-                // CapsLock
-		        if (scancode == 0x3A)
-		        {
-		            if (isCapsLock)
-		                isCapsLock = 0;
-		            else
-                        isCapsLock = 1;
-                }
-                // If Upper or Lower case
-                keystore_table[current_keystore_index].state = 0;
-                if ((isShift + isCapsLock) % 2)
-                    if (isRU)
-                        keystore_table[current_keystore_index].state = 3;
-                    else
-                        keystore_table[current_keystore_index].state = 1;
+            // If Upper or Lower case
+            keystore[keystore_index].state = 0;
+            if ((isShift + isCapsLock) % 2)
+                if (isRU)
+                    keystore[keystore_index].state = 3;
                 else
-                    if (isRU)
-                        keystore_table[current_keystore_index].state = 2;
-                    else
-                        keystore_table[current_keystore_index].state = 0;
+                    keystore[keystore_index].state = 1;
+            else
+                if (isRU)
+                    keystore[keystore_index].state = 2;
+                else
+                    keystore[keystore_index].state = 0;
 
-				keystore_table[current_keystore_index].keystore_code = scancode;
-				keystore_table[current_keystore_index].down_time = mtime();
-				keystore_table[current_keystore_index].search_time = tmp - search_time;
+		    keystore[keystore_index].scancode = scancode;
+			keystore[keystore_index].comb_number = comb_number;
+			keystore[keystore_index].down_time = tmp;
+			keystore[keystore_index].search_time = tmp - search_time;
+			insert_in_queue(log_queue_table, scancode, keystore[keystore_index].state, keystore[keystore_index].comb_number, 0, keystore[keystore_index].search_time);
 					
-				current_keystore++;
-				search_time = mtime();
-			}
-					
+			search_time = tmp;
 		}
 	}
-	previous_scancode = scancode;
 
 	kfree((void*)work);
 }
 
 static int procfile_open(struct inode *i, struct file *f) 
 {
-	opened = true;
-	return 0;
+	return SUCCESS;
 }
 
 static ssize_t procfile_read(struct file *filp, char *buffer, size_t count, loff_t *offp) 
@@ -316,24 +347,21 @@ static ssize_t procfile_read(struct file *filp, char *buffer, size_t count, loff
 	if (queue_isempty(log_queue_table)) 
 		return 0;
 	struct keystore_item temp = remove_from_queue(log_queue_table);
-		
-	size_t mysize = sizeof(struct keystore_item);
+
 	char* mychar = "UndefinedKey";
 	if (temp.state == 0)
-	    mychar = lowerKbdus[temp.keystore_code]; //temp.keystore_code
+	    mychar = lowerKbdus[temp.scancode];
 	if (temp.state == 1)
-	    mychar = upperKbdus[temp.keystore_code]; //temp.keystore_code
+	    mychar = upperKbdus[temp.scancode];
 	if (temp.state == 2)
-	    mychar = lowerKbdusRU[temp.keystore_code]; //temp.keystore_code
+	    mychar = lowerKbdusRU[temp.scancode];
 	if (temp.state == 3)
-	    mychar = upperKbdusRU[temp.keystore_code];
+	    mychar = upperKbdusRU[temp.scancode];
 
-	len += sprintf(msg, "%i %llu %llu %s\n", temp.keystore_code, temp.down_time, temp.search_time, mychar);
-	//len += sprintf(msg, "%d %llu %llu\n", temp.keystore_code, temp.state, temp.search_time);
+	len += sprintf(msg, "%d %llu %llu %s %d\n", temp.scancode, temp.down_time, temp.search_time, mychar, temp.comb_number);
 
 	copy_to_user(buffer, msg, len);
 
-	opened = false;
 	return len;
 }
 
@@ -345,21 +373,21 @@ const struct file_operations proc_file_fops =
 
 static int keymonitoring_init(void)
 {
-	msg = kmalloc(keystore_ITEM_MAX_SIZE*sizeof(char), GFP_ATOMIC);
-	keystore_table	= kmalloc(keystore_ITEMS_MAX * sizeof(struct keystore_item), GFP_ATOMIC);
+	msg = kmalloc(KEYSTORE_ITEM_MAX_SIZE*sizeof(char), GFP_ATOMIC);
+	keystore	= kmalloc(KEYSTORE_ITEMS_MAX * sizeof(struct keystore_item), GFP_ATOMIC);
 	log_queue_table = kmalloc(sizeof(struct log_queue), GFP_ATOMIC);
 	init_queue(log_queue_table);
 	search_time = 0;
-	int i;
-	for (i = 0; i < keystore_ITEMS_MAX; i++) 
+	for (i = 0; i < KEYSTORE_ITEMS_MAX; i++) 
 	{
-		keystore_table[i].keystore_code = -1;
-		keystore_table[i].state = 0;
-		keystore_table[i].down_time = 0;	
-		keystore_table[i].next = NULL;
+		keystore[i].scancode = -1;
+		keystore[i].state = 0;
+		keystore[i].comb_number = -1;
+		keystore[i].down_time = 0;	
+		keystore[i].next = NULL;
 	}
-	current_keystore = 0;
-	current_keystore_index = 0;
+	keystore_index = 0;
+	comb_number = 0;
 	
 	proc_file = proc_create("keymonitoring", 0644, NULL, &proc_file_fops);
 	if (proc_file == NULL) 
@@ -369,7 +397,7 @@ static int keymonitoring_init(void)
 		return -ENOMEM;
 	}
 
-	int result = request_irq(1, (irq_handler_t) irq_handler, IRQF_SHARED, "keymonitoring_rirq", (void*)(irq_handler));
+	result = request_irq(1, (irq_handler_t) irq_handler, IRQF_SHARED, "keymonitoring_rirq", (void*)(irq_handler));
 	if (!result) 
 	{
 		queue = alloc_workqueue("keymonitoring_wq", WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
@@ -395,7 +423,7 @@ static void keymonitoring_exit(void)
 	free_irq(1, (void*)irq_handler);
 
 	kfree(log_queue_table);
-	kfree(keystore_table);	
+	kfree(keystore);	
 	kfree(msg);
 
 	printk(KERN_INFO "keymonitoring info: successfully unloaded!");
