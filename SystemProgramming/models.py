@@ -133,3 +133,6 @@ class KeypadMonitoringDB():
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
+
+    def hello(self):
+        return True
