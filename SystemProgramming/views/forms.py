@@ -33,6 +33,9 @@ class BaseForm(QWidget):
     def __del__(self):
         pass
 
+    def construct(self):
+        pass
+
     @QtCore.pyqtSlot(list)
     def onInitWindowSignalReverted(self, list):
         pass
@@ -78,7 +81,8 @@ class BaseForm(QWidget):
         pass
 
     def displayMessage(self, list):
-        return QMessageBox.critical(self, list[0], list[1], QMessageBox.Ok)
+        message = self.messages[list[0]]
+        return QMessageBox.critical(self, message[0], message[1], QMessageBox.Ok)
 
     def askMessage(self, list):
         return QMessageBox.question(self, list[0], list[1], QMessageBox.Yes, QMessageBox.No)
@@ -156,17 +160,11 @@ class MainForm(BaseForm):
 
     @QtCore.pyqtSlot(list)
     def onAddUserSignalReverted(self, list):
-        if (list[0] == "OK"):
-            self.comboUser.addItem(list[1])
-        else:
-            self.displayMessage(self.messages[list[0]])
+        self.comboUser.addItem(list[0])
 
     @QtCore.pyqtSlot(list)
     def onDeleteUserSignalReverted(self, list):
-        if (list[0] == "OK"):
-            self.comboUser.removeItem(self.comboUser.findText(list[1]))
-        else:
-            self.displayMessage(self.messages[list[0]])
+        self.comboUser.removeItem(self.comboUser.findText(list[0]))
 
     @QtCore.pyqtSlot()
     def onClearLogSignalReverted(self):

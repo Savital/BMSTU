@@ -26,6 +26,7 @@ class Manager(QtCore.QObject):
     doneClearLogSignal = QtCore.pyqtSignal()
 
     refreshDataSignal = QtCore.pyqtSignal(list)
+    errorSignal = QtCore.pyqtSignal(list)
 
     def __init__(self):
         super(Manager, self).__init__()
@@ -69,6 +70,7 @@ class Manager(QtCore.QObject):
         #Close when the thread terminated (TODO)
 
         self.refreshDataSignal.connect(self.window.onRefreshSignalReverted)
+        self.errorSignal.connect(self.window.displayMessage)
 
 
     def runApp(self):
@@ -123,24 +125,24 @@ class Manager(QtCore.QObject):
     @QtCore.pyqtSlot(list)
     def addUser(self, list):
         if list[0] == "":
-            self.doneAddUserSignal.emit(["EMPTY_NAME"])
+            self.errorSignal.emit(["EMPTY_NAME"])
             return
 
         names = self.mUsers.selectByName(list[0])
         if names == None:
             self.mUsers.insert(list[0])
-            self.doneAddUserSignal.emit(["OK", list[0]])
+            self.doneAddUserSignal.emit([list[0]])
         else:
-            self.doneAddUserSignal.emit(["ALREADY_EXIST", list[0]])
+            self.errorSignal.emit(["ALREADY_EXIST"])
 
     @QtCore.pyqtSlot(list)
     def deleteUser(self, list):
         names = self.mUsers.selectByName(list[0])
         if names != None:
-            self.doneDeleteUserSignal.emit(["OK", list[0]])
             self.mUsers.delete(list[0])
+            self.doneDeleteUserSignal.emit([list[0]])
         else:
-            self.doneDeleteUserSignal.emit(["DOESNT_EXIST", list[0]])
+            self.errorSignal.emit(["DOESNT_EXIST"])
 
     @QtCore.pyqtSlot()
     def clearLog(self):
