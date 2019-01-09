@@ -1,8 +1,11 @@
-# Reads data from proc 
+# Savital https://github.com/Savital
+# Reads data from proc
 
-class DataReader():
+import os
+
+class ProcReader():
     def __init__(self):
-        super(DataReader, self).__init__()
+        super(ProcReader, self).__init__()
         self.construct()
 
     def __del__(self):
@@ -11,9 +14,12 @@ class DataReader():
     def construct(self):
         pass
 
-    def get(self, name):
+    def get(self, path):
+        if not os.path.exists(path):
+            return False
+
         results = []
-        f = open(name, 'r')
+        f = open(path, 'r')
         for line in f:
             list = []
             i = 0

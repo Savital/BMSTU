@@ -1,11 +1,14 @@
-# views.py MainWindow view
 # Savital https://github.com/Savital
+# views.py MainWindow view
 
 from PyQt5 import uic, QtWidgets, QtGui, QtSql, QtCore
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtSql import *
 from PyQt5.QtCore import *
+
+from errors import *
+
 import string
 
 # MainWindow is view
@@ -19,11 +22,12 @@ class MainWindow(QWidget):
     clearLogSignal = QtCore.pyqtSignal()
 
     closeSignal = QtCore.pyqtSignal()
+    errorSignal = QtCore.pyqtSignal(list)
 
     def __init__(self):
         super(MainWindow, self).__init__()
         self.UI = uic.loadUi("MainForm.ui", self)
-        self.setWindowIcon(QtGui.QIcon('icon.png'))
+        self.setWindowIcon(QtGui.QIcon('static/icon.png'))
 
         self.construct()
 
@@ -39,7 +43,7 @@ class MainWindow(QWidget):
         self.buttonMonitoring.setStyleSheet("background-color: qlineargradient(spread:pad, x1:0.0568182, y1:0.126, x2:0.75, y2:0.227, stop:0.0738636 rgba(0, 255, 0, 255), stop:0.840909 rgba(0, 136, 0, 255));\n")
 
     def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Сообщение', "Вы точно хотите выйти?", QMessageBox.Yes, QMessageBox.No)
+        reply = QMessageBox.question(self, 'Сообщение', "Вы точно хотите выйти?", QMessageBox.Yes, QMessageBox.No) #TODO
 
         if reply == QMessageBox.Yes:
             event.accept()
@@ -94,14 +98,14 @@ class MainWindow(QWidget):
         if (list[0]):
             self.comboUser.addItem(list[1])
         else:
-            reply = QMessageBox.critical(self, 'Ошибка', "Данное имя уже существует", QMessageBox.Ok)
+            ErrorMessage(self, "Данное имя уже существует") #TODO
 
     @QtCore.pyqtSlot(list)
     def onDeleteUserSignalReverted(self, list):
         if (list[0]):
             self.comboUser.removeItem(self.comboUser.findText(list[1]))
         else:
-            reply = QMessageBox.critical(self, 'Ошибка', "Данного имени нет", QMessageBox.Ok)
+            ErrorMessage(self, "Данного имени нет") #TODO
 
     @QtCore.pyqtSlot()
     def onClearLogSignalReverted(self):
@@ -133,7 +137,7 @@ def onButtonAddUserClick(window):
     if name != "":
         window.addUserSignal.emit([name])
     else:
-        reply = QMessageBox.critical(window, 'Ошибка', "Неправильный формат имени", QMessageBox.Ok)
+        ErrorMessage("Неправильный формат имени") #TODO
 
 def onButtonDeleteUserClick(window):
     name = window.editUserName.text().strip()

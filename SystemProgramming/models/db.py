@@ -1,138 +1,139 @@
-# models.py Logbase wrapper
 # Savital https://github.com/Savital
 
 import sqlite3
 
-# KeypadMonitoringDB is model, wraps the sqlite3 DB
-class KeypadMonitoringDB():
-    createTableUsersSQL = "CREATE TABLE IF NOT EXISTS users(username CHAR)"
-    dropTableUsersSQL = "DROP TABLE IF EXISTS users"
-    selectUsersSQL = "SELECT * FROM users"
-    selectUsersByNameSQL = "SELECT * FROM users WHERE username='{0}'"
-    insertUserSQL = "INSERT INTO users VALUES ('{0}')"
-    deleteUserSQL = "DELETE FROM users WHERE username = '{0}'"
-
-    createTableLogSQL = "CREATE TABLE IF NOT EXISTS log(username CHAR, scancode INT, downtime INT, searchtime INT, keyname CHAR)"
-    dropTableLogSQL = "DROP TABLE IF EXISTS log"
-    selectLogSQL = "SELECT * FROM log"
-    selectLogByNameSQL = "SELECT * FROM log WHERE username='{0}'"
-    insertLogByNameSQL = "INSERT INTO log VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')"
-    deleteLogByNameSQL = "DELETE FROM log WHERE username = '{0}'"
+class Users():
+    createTableSQL = "CREATE TABLE IF NOT EXISTS users(username CHAR)"
+    dropTableSQL = "DROP TABLE IF EXISTS users"
+    selectSQL = "SELECT * FROM users"
+    selectByNameSQL = "SELECT * FROM users WHERE username='{0}'"
+    insertSQL = "INSERT INTO users VALUES ('{0}')"
+    deleteSQL = "DELETE FROM users WHERE username = '{0}'"
 
     def __init__(self):
-        super(KeypadMonitoringDB, self).__init__()
+        super(Users, self).__init__()
         self.construct()
 
     def construct(self):
         pass
 
-    # Table Users
-    def createTableUsers(self):
+    def createTable(self):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.createTableUsersSQL)
+        self.cursor.execute(self.createTableSQL)
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
-    def dropTableUsers(self):
+    def dropTable(self):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.dropTableUsersSQL)
+        self.cursor.execute(self.dropTableSQL)
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
-    def selectUsers(self):
+    def select(self):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.selectUsersSQL)
+        self.cursor.execute(self.selectSQL)
         results = self.cursor.fetchall()
         self.cursor.close()
         self.conn.close()
         return results
 
-    def selectUsersByName(self, name):
+    def selectByName(self, name):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.selectUsersByNameSQL.format(name))
+        self.cursor.execute(self.selectByNameSQL.format(name))
         results = self.cursor.fetchone()
         self.cursor.close()
         self.conn.close()
         return results
 
-    def insertUser(self, name):
+    def insert(self, name):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.insertUserSQL.format(name))
+        self.cursor.execute(self.insertSQL.format(name))
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
-    def deleteUser(self, name):
+    def delete(self, name):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.deleteUserSQL.format(name))
+        self.cursor.execute(self.deleteSQL.format(name))
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
-    # Table Log
-    def createTableLog(self):
+class Log():
+    createTableSQL = "CREATE TABLE IF NOT EXISTS log(username CHAR, scancode INT, downtime INT, searchtime INT, keyname CHAR)"
+    dropTableSQL = "DROP TABLE IF EXISTS log"
+    selectSQL = "SELECT * FROM log"
+    selectByNameSQL = "SELECT * FROM log WHERE username='{0}'"
+    insertSQL = "INSERT INTO log VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')"
+    deleteSQL = "DELETE FROM log WHERE username = '{0}'"
+
+    def __init__(self):
+        super(Log, self).__init__()
+        self.construct()
+
+    def construct(self):
+        pass
+
+    def createTable(self):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.createTableLogSQL)
+        self.cursor.execute(self.createTableSQL)
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
-    def dropTableLog(self):
+    def dropTable(self):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.dropTableLogSQL)
+        self.cursor.execute(self.dropTableSQL)
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
-    def selectLog(self):
+    def select(self):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.selectLogSQL)
+        self.cursor.execute(self.selectSQL)
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
-    def selectLogByName(self, name):
+    def selectByName(self, name):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.selectLogByNameSQL.format(name))
+        self.cursor.execute(self.selectByNameSQL.format(name))
         results = self.cursor.fetchall()
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
         return results
 
-    def insertLogByName(self, name, list):
+    def insert(self, name, list):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
         if len(list) == 0:
             pass
         elif len(list[0]) == 1:
-            self.cursor.execute(self.insertLogByNameSQL.format(name, list[0], list[1], list[2], list[3]))
+            self.cursor.execute(self.insertSQL.format(name, list[0], list[1], list[2], list[3]))
         else:
             for item in list:
-                self.cursor.execute(self.insertLogByNameSQL.format(name, item[0], item[1], item[2], item[3]))
+                self.cursor.execute(self.insertSQL.format(name, item[0], item[1], item[2], item[3]))
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
-    def deleteLogByName(self, name):
+    def delete(self, name):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.deleteLogByNameSQL.format(name))
+        self.cursor.execute(self.deleteSQL.format(name))
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
-
-    def hello(self):
-        return True

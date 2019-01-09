@@ -1,8 +1,9 @@
+# Savital https://github.com/Savital
 # Implements methods to calculate stats by log data
 
-class Calculator():
+class Calc():
     def __init__(self):
-        super(Calculator, self).__init__()
+        super(Calc, self).__init__()
         self.construct()
 
     def __del__(self):

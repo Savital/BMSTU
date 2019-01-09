@@ -1,17 +1,17 @@
-# manager.py Manager control
 # Savital https://github.com/Savital
+# manager.py Manager control
 
 import sys
 
-from PyQt5 import QtCore, QtSql
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtSql import *
+
+from models.db import Users, Log
+from models.parsers import ProcReader
+from models.calcs import Calc
+from models.timers import RefreshEventGenerator
 
 from views import MainWindow
-from models import KeypadMonitoringDB
-from timer import RefreshEventGenerator
-from reader import DataReader
-from calculator import Calculator
 
 # Controller, handles signals between view and model
 class Manager(QtCore.QObject):
@@ -33,18 +33,19 @@ class Manager(QtCore.QObject):
         self.timer = RefreshEventGenerator(0.01, self.onRefreshEvent)
         self.timer.start()
 
-    def __del__(self):
-        pass
+    def __del__(self): #TODO
+        self.timer.cancel()
 
     def construct(self):
-        self.db = KeypadMonitoringDB()
-        self.db.createTableUsers()
-        self.db.createTableLog()
+        self.mUsers = Users()
+        self.mLog = Log()
+        self.mProcReader = ProcReader()
+        self.mCalc = Calc()
+
+        self.mUsers.createTable()
+        self.mLog.createTable()
 
         self.monitoringFlag = False
-
-        self.dataReader = DataReader()
-        self.calc = Calculator()
 
     def connects(self):
         self.window.initWindowSignal.connect(self.initWindow)
@@ -80,7 +81,7 @@ class Manager(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def initWindow(self):
-        self.users = self.db.selectUsers()
+        self.users = self.mUsers.select()
         self.user = ""
         if len(self.users):
             self.user = self.users[0][0]
@@ -88,14 +89,14 @@ class Manager(QtCore.QObject):
         self.doneInitSignal.emit([self.users])
 
     def refreshData(self):
-        self.log = self.db.selectLogByName(self.user)
-        self.stats = self.calc.formStats(self.log)
+        self.log = self.mLog.selectByName(self.user)
+        self.stats = self.mCalc.formStats(self.log)
 
 
     def onRefreshEvent(self):
-        list = self.dataReader.get(self.PROC_PATH)
+        list = self.mProcReader.get(self.PROC_PATH)
         if list:
-            self.db.insertLogByName(self.user, list)
+            self.mLog.insert(self.user, list)
 
         self.refreshData()
 
@@ -113,7 +114,7 @@ class Manager(QtCore.QObject):
     def monitoring(self):
         self.monitoringFlag = not self.monitoringFlag
         if self.monitoringFlag:
-            list = self.dataReader.get(self.PROC_PATH)
+            list = self.mProcReader.get(self.PROC_PATH)
             self.timer.runF()
         else:
             self.timer.stopF()
@@ -122,25 +123,25 @@ class Manager(QtCore.QObject):
 
     @QtCore.pyqtSlot(list)
     def addUser(self, list):
-        names = self.db.selectUsersByName(list[0])
+        names = self.mUsers.selectByName(list[0])
         if names == None:
-            self.db.insertUser(list[0])
+            self.mUsers.insert(list[0])
             self.doneAddUserSignal.emit([True, list[0]])
         else:
             self.doneAddUserSignal.emit([False, list[0]])
 
     @QtCore.pyqtSlot(list)
     def deleteUser(self, list):
-        names = self.db.selectUsersByName(list[0])
+        names = self.mUsers.selectByName(list[0])
         if names != None:
             self.doneDeleteUserSignal.emit([True, list[0]])
-            self.db.deleteUser(list[0])
+            self.mUsers.delete(list[0])
         else:
             self.doneDeleteUserSignal.emit([False, list[0]])
 
     @QtCore.pyqtSlot()
     def clearLog(self):
-        self.db.deleteLogByName(self.user)
+        self.mLog.delete(self.user)
         self.doneClearLogSignal.emit()
 
     @QtCore.pyqtSlot()

@@ -1,3 +1,5 @@
+# Savital https://github.com/Savital
+
 from threading import Timer, Thread, Event
 
 # Runs function hFunction on clock, when state is not zero
@@ -22,6 +24,7 @@ class RefreshEventGenerator():
 
     def cancel(self):
         self.thread.cancel()
+
 
     def runF(self):
         self.state = True

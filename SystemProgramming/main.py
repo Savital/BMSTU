@@ -1,5 +1,5 @@
-# main.py launch script
 # Savital https://github.com/Savital
+# main.py launch script
 
 from manager import Manager
 
