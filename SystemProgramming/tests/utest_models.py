@@ -1,14 +1,14 @@
 import sys
 sys.path.append("../")
+from models import KeypadMonitoringDB
 
 import unittest
 import sqlite3
 from unittest import TestCase, mock
 from unittest.mock import patch, MagicMock
-from models import KeypadMonitoringDB
 
 
-class Models(unittest.TestCase):
+class ModelsTest(unittest.TestCase):
     def setUp(self):
         self.db = KeypadMonitoringDB()
         self.db.dropTableUsers()
@@ -114,7 +114,17 @@ class Models(unittest.TestCase):
 
         self.assertEqual(results, [('TestUser1',), ('TestUser3',)])
 
+    def testSelectLog(self):
+        pass
 
+    def testSelectLogByName(self):
+        pass
+
+    def testInsertLog(self):
+        pass
+
+    def testDeleteLog(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()
