@@ -1,9 +1,8 @@
-
+# Reads data from proc 
 
 class DataReader():
-    def __init__(self, name):
+    def __init__(self):
         super(DataReader, self).__init__()
-        self.name = name
         self.construct()
 
     def __del__(self):
@@ -12,9 +11,9 @@ class DataReader():
     def construct(self):
         pass
 
-    def get(self):
+    def get(self, name):
         results = []
-        f = open(self.name, 'r')
+        f = open(name, 'r')
         for line in f:
             list = []
             i = 0

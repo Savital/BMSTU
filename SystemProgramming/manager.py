@@ -15,6 +15,8 @@ from calculator import Calculator
 
 # Controller, handles signals between view and model
 class Manager(QtCore.QObject):
+    PROC_PATH = "/proc/keymonitoring"
+
     doneInitSignal = QtCore.pyqtSignal(list)
     doneChangeUserStateSignal = QtCore.pyqtSignal(list)
 
@@ -28,7 +30,7 @@ class Manager(QtCore.QObject):
     def __init__(self):
         super(Manager, self).__init__()
         self.construct()
-        self.timer = RefreshEventGenerator(0.01, self.refreshData)
+        self.timer = RefreshEventGenerator(0.01, self.onRefreshEvent)
         self.timer.start()
 
     def __del__(self):
@@ -41,6 +43,7 @@ class Manager(QtCore.QObject):
 
         self.monitoringFlag = False
 
+        self.dataReader = DataReader()
         self.calc = Calculator()
 
     def connects(self):
@@ -84,20 +87,33 @@ class Manager(QtCore.QObject):
 
         self.doneInitSignal.emit([self.users])
 
+    def refreshData(self):
+        self.log = self.db.selectLogByName(self.user)
+        self.stats = self.calc.formStats(self.log)
+
+
+    def onRefreshEvent(self):
+        list = self.dataReader.get(self.PROC_PATH)
+        if list:
+            self.db.insertLogByName(self.user, list)
+
+        self.refreshData()
+
+        self.refreshDataSignal.emit([self.stats, self.log])
+
     @QtCore.pyqtSlot(list)
     def changeUserState(self, list):
         self.user = list[0]
 
-        self.log = self.db.selectLogByName(self.user)
-        self.stats = self.formStats()
+        self.refreshData()
+
         self.doneChangeUserStateSignal.emit([self.stats, self.log])
 
     @QtCore.pyqtSlot()
     def monitoring(self):
         self.monitoringFlag = not self.monitoringFlag
         if self.monitoringFlag:
-            dataReader = DataReader("/proc/keymonitoring")
-            list = dataReader.get()
+            list = self.dataReader.get(self.PROC_PATH)
             self.timer.runF()
         else:
             self.timer.stopF()
@@ -130,24 +146,3 @@ class Manager(QtCore.QObject):
     @QtCore.pyqtSlot()
     def close(self):
         self.timer.cancel()
-
-    def formStats(self):
-        list = []
-        if len(self.log) == 0:
-            list.extend([0.0, 0.0, 0.0, 0.0, 0.0])
-        elif len(self.log[0]) == 1:
-            list.extend([self.log[0][2], self.log[0][3], 1 / (self.log[0][2] + self.log[0][3]), 0.0, 0.0])
-        else:
-            list.extend([self.calc.averageDowntime(self.log), self.calc.averageSearchtime(self.log), self.calc.inputSpeed(self.log), 0.0, 0.0])
-
-        return list
-
-    def refreshData(self):
-        dataReader = DataReader("/proc/keymonitoring")
-        list = dataReader.get()
-        if list:
-            self.db.insertLogByName(self.user, list)
-
-        self.log = self.db.selectLogByName(self.user)
-        self.stats = self.formStats()
-        self.refreshDataSignal.emit([self.stats, self.log])
