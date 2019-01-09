@@ -2,43 +2,16 @@
 # Savital https://github.com/Savital
 
 import sys
+
 from PyQt5 import QtCore, QtSql
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtSql import *
+
 from views import MainWindow
 from models import KeypadMonitoringDB
-from threading import Timer, Thread, Event
+from timer import RefreshEventGenerator
 from reader import DataReader
-import pygame
-
-# Runs function hFunction on clock, when state is not zero
-class RefreshEventGenerator():
-    def __init__(self, t, hFunction):
-        self.t=t
-        self.hFunction = hFunction
-        self.thread = Timer(self.t, self.handle_function)
-        self.state = 0
-
-    def __del__(self):
-        pass
-
-    def handle_function(self):
-        if self.state:
-            self.hFunction()
-        self.thread = Timer(self.t, self.handle_function)
-        self.thread.start()
-
-    def start(self):
-        self.thread.start()
-
-    def cancel(self):
-        self.thread.cancel()
-
-    def runF(self):
-        self.state += 1
-
-    def stopF(self):
-        self.state -= 1
+from calculator import Calculator
 
 # Controller, handles signals between view and model
 class Manager(QtCore.QObject):
@@ -67,6 +40,8 @@ class Manager(QtCore.QObject):
         self.db.createTableLog()
 
         self.monitoringFlag = False
+
+        self.calc = Calculator()
 
     def connects(self):
         self.window.initWindowSignal.connect(self.initWindow)
@@ -156,46 +131,15 @@ class Manager(QtCore.QObject):
     def close(self):
         self.timer.cancel()
 
-    def averageDowntime(self, list):
-        average = 0.0
-        for item in self.log:
-            average += item[2]
-        average /= len(self.log)
-        return average
-
-    def averageSearchtime(self, list):
-        average = 0.0
-        for item in self.log:
-            average += item[3]
-        average /= len(self.log)
-        return average
-
-    def inputSpeed(self, list):
-        sum = 0
-        for item in self.log:
-            sum += item[2] + item[3]
-        return 1000 * len(self.log) / (sum)
-
     def formStats(self):
         list = []
         if len(self.log) == 0:
-            list.append(0.0)
-            list.append(0.0)
-            list.append(0.0)
-            list.append(0.0)
-            list.append(0.0)
+            list.extend([0.0, 0.0, 0.0, 0.0, 0.0])
         elif len(self.log[0]) == 1:
-            list.append(self.log[0][2])
-            list.append(self.log[0][3])
-            list.append(1 / (self.log[0][2] + self.log[0][3]))
-            list.append(0.0)
-            list.append(0.0)
+            list.extend([self.log[0][2], self.log[0][3], 1 / (self.log[0][2] + self.log[0][3]), 0.0, 0.0])
         else:
-            list.append(self.averageDowntime(self.log))
-            list.append(self.averageSearchtime(self.log))
-            list.append(self.inputSpeed(self.log))
-            list.append(0.0)
-            list.append(0.0)
+            list.extend([self.calc.averageDowntime(self.log), self.calc.averageSearchtime(self.log), self.calc.inputSpeed(self.log), 0.0, 0.0])
+
         return list
 
     def refreshData(self):
