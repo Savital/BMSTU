@@ -12,25 +12,31 @@ class Calc():
     def construct(self):
         pass
 
-    def averageDowntime(self, list):
+    def avrDowntime(self, list):
         average = 0.0
         for item in list:
             average += item[2]
         average /= len(list)
         return average
 
-    def averageSearchtime(self, list):
+    def avrSearchtime(self, list):
         average = 0.0
         for item in list:
             average += item[3]
         average /= len(list)
         return average
 
-    def inputSpeed(self, list):
+    def inpSpeed(self, list):
         sum = 0
         for item in list:
             sum += item[2] + item[3]
         return 1000 * len(list) / (sum)
+
+    def cntShortcuts(self, list):
+        return 1
+
+    def cntFuncs(self, list):
+        return 1
 
     def formStats(self, list):
         results = []
@@ -39,6 +45,6 @@ class Calc():
         elif len(list[0]) == 1:
             results.extend([list[0][2], list[0][3], 1 / (list[0][2] + list[0][3]), 0.0, 0.0])
         else:
-            results.extend([self.averageDowntime(list), self.averageSearchtime(list), self.inputSpeed(list), 0.0, 0.0])
+            results.extend([self.avrDowntime(list), self.avrSearchtime(list), self.inpSpeed(list), self.cntShortcuts(list), self.cntFuncs(list)])
 
         return results

@@ -11,7 +11,7 @@ from models.parsers import ProcReader
 from models.calcs import Calc
 from models.timers import RefreshEventGenerator
 
-from views import MainWindow
+from views.forms import MainForm
 
 # Controller, handles signals between view and model
 class Manager(QtCore.QObject):
@@ -65,7 +65,6 @@ class Manager(QtCore.QObject):
         self.doneDeleteUserSignal.connect(self.window.onDeleteUserSignalReverted)
         self.doneClearLogSignal.connect(self.window.onClearLogSignalReverted)
 
-        #Close when the thread finishes (normally)
         self.window.closeSignal.connect(self.close)
         #Close when the thread terminated (TODO)
 
@@ -74,7 +73,7 @@ class Manager(QtCore.QObject):
 
     def runApp(self):
         self.app = QApplication(sys.argv)
-        self.window = MainWindow()
+        self.window = MainForm()
         self.connects()
         self.window.show()
         sys.exit(self.app.exec_())
@@ -123,21 +122,25 @@ class Manager(QtCore.QObject):
 
     @QtCore.pyqtSlot(list)
     def addUser(self, list):
+        if list[0] == "":
+            self.doneAddUserSignal.emit(["EMPTY_NAME"])
+            return
+
         names = self.mUsers.selectByName(list[0])
         if names == None:
             self.mUsers.insert(list[0])
-            self.doneAddUserSignal.emit([True, list[0]])
+            self.doneAddUserSignal.emit(["OK", list[0]])
         else:
-            self.doneAddUserSignal.emit([False, list[0]])
+            self.doneAddUserSignal.emit(["ALREADY_EXIST", list[0]])
 
     @QtCore.pyqtSlot(list)
     def deleteUser(self, list):
         names = self.mUsers.selectByName(list[0])
         if names != None:
-            self.doneDeleteUserSignal.emit([True, list[0]])
+            self.doneDeleteUserSignal.emit(["OK", list[0]])
             self.mUsers.delete(list[0])
         else:
-            self.doneDeleteUserSignal.emit([False, list[0]])
+            self.doneDeleteUserSignal.emit(["DOESNT_EXIST", list[0]])
 
     @QtCore.pyqtSlot()
     def clearLog(self):

@@ -25,7 +25,6 @@ class RefreshEventGenerator():
     def cancel(self):
         self.thread.cancel()
 
-
     def runF(self):
         self.state = True
 

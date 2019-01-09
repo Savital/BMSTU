@@ -1,5 +1,5 @@
 # Savital https://github.com/Savital
-# views.py MainWindow view
+# views.py MainForm view
 
 from PyQt5 import uic, QtWidgets, QtGui, QtSql, QtCore
 from PyQt5.QtWidgets import *
@@ -7,12 +7,15 @@ from PyQt5.QtGui import *
 from PyQt5.QtSql import *
 from PyQt5.QtCore import *
 
-from errors import *
-
 import string
 
-# MainWindow is view
-class MainWindow(QWidget):
+class BaseForm(QWidget):
+    messages = {"EXIT" : ["Сообщение", "Вы точно хотите выйти?"],
+                "EMPTY_NAME" : ["Ошибка", "Остались незаполненные поля."],
+                "ALREADY_EXIST" : ["Ошибка", "Данное имя уже присутствует в базе данных."],
+                "DOESNT_EXIST" : ["Ошибка", "Данного имени нет в базе данных."],
+                "WRONG_FORMAT" : ["Ошибка", "Неправильный формат имени."]}
+
     initWindowSignal = QtCore.pyqtSignal()
     changeUserStateSignal = QtCore.pyqtSignal(list)
 
@@ -22,11 +25,69 @@ class MainWindow(QWidget):
     clearLogSignal = QtCore.pyqtSignal()
 
     closeSignal = QtCore.pyqtSignal()
-    errorSignal = QtCore.pyqtSignal(list)
 
     def __init__(self):
-        super(MainWindow, self).__init__()
-        self.UI = uic.loadUi("MainForm.ui", self)
+        super(BaseForm, self).__init__()
+        pass
+
+    def __del__(self):
+        pass
+
+    @QtCore.pyqtSlot(list)
+    def onInitWindowSignalReverted(self, list):
+        pass
+
+    @QtCore.pyqtSlot()
+    def onComboUserChanged(self):
+        pass
+
+    @QtCore.pyqtSlot(list)
+    def onChangeUserStateSignalReverted(self, list):
+        pass
+
+    @QtCore.pyqtSlot(list)
+    def onMonitoringSignalReverted(self, list):
+        pass
+
+    @QtCore.pyqtSlot(list)
+    def onAddUserSignalReverted(self, list):
+        pass
+
+    @QtCore.pyqtSlot(list)
+    def onDeleteUserSignalReverted(self, list):
+        pass
+
+    @QtCore.pyqtSlot()
+    def onClearLogSignalReverted(self):
+        pass
+
+    @QtCore.pyqtSlot(list)
+    def onRefreshSignalReverted(self, list):
+        pass
+
+    def onButtonMonitoringClick(window):
+        pass
+
+    def onButtonAddUserClick(window):
+        pass
+
+    def onButtonDeleteUserClick(window):
+        pass
+
+    def onButtonClearLogClick(window):
+        pass
+
+    def displayMessage(self, list):
+        return QMessageBox.critical(self, list[0], list[1], QMessageBox.Ok)
+
+    def askMessage(self, list):
+        return QMessageBox.question(self, list[0], list[1], QMessageBox.Yes, QMessageBox.No)
+
+# MainForm is view
+class MainForm(BaseForm):
+    def __init__(self):
+        super(MainForm, self).__init__()
+        self.UI = uic.loadUi("static/MainForm.ui", self)
         self.setWindowIcon(QtGui.QIcon('static/icon.png'))
 
         self.construct()
@@ -35,15 +96,15 @@ class MainWindow(QWidget):
         pass
 
     def construct(self):
-        self.buttonMonitoring.clicked.connect(lambda: onButtonMonitoringClick(self))
-        self.buttonAdd.clicked.connect(lambda: onButtonAddUserClick(self))
-        self.buttonDelete.clicked.connect(lambda: onButtonDeleteUserClick(self))
-        self.buttonClear.clicked.connect(lambda: onButtonClearLogClick(self))
+        self.buttonMonitoring.clicked.connect(lambda: self.onButtonMonitoringClick())
+        self.buttonAdd.clicked.connect(lambda: self.onButtonAddUserClick())
+        self.buttonDelete.clicked.connect(lambda: self.onButtonDeleteUserClick())
+        self.buttonClear.clicked.connect(lambda: self.onButtonClearLogClick())
 
         self.buttonMonitoring.setStyleSheet("background-color: qlineargradient(spread:pad, x1:0.0568182, y1:0.126, x2:0.75, y2:0.227, stop:0.0738636 rgba(0, 255, 0, 255), stop:0.840909 rgba(0, 136, 0, 255));\n")
 
     def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Сообщение', "Вы точно хотите выйти?", QMessageBox.Yes, QMessageBox.No) #TODO
+        reply = self.askMessage(self.messages["EXIT"])
 
         if reply == QMessageBox.Yes:
             event.accept()
@@ -73,7 +134,7 @@ class MainWindow(QWidget):
         self.keyFunctionals.setText(str(list[0][4]))
 
         if len(list[1]) == 0:
-            self.textLogging.setText("Log is empty")
+            self.textLogging.setText("Журнал пуст")
         elif len(list[1][0]) == 1:
             self.textLogging.setText(str(list[1]))
         else:
@@ -95,21 +156,21 @@ class MainWindow(QWidget):
 
     @QtCore.pyqtSlot(list)
     def onAddUserSignalReverted(self, list):
-        if (list[0]):
+        if (list[0] == "OK"):
             self.comboUser.addItem(list[1])
         else:
-            ErrorMessage(self, "Данное имя уже существует") #TODO
+            self.displayMessage(self.messages[list[0]])
 
     @QtCore.pyqtSlot(list)
     def onDeleteUserSignalReverted(self, list):
-        if (list[0]):
+        if (list[0] == "OK"):
             self.comboUser.removeItem(self.comboUser.findText(list[1]))
         else:
-            ErrorMessage(self, "Данного имени нет") #TODO
+            self.displayMessage(self.messages[list[0]])
 
     @QtCore.pyqtSlot()
     def onClearLogSignalReverted(self):
-        self.textLogging.setText("Log is empty")
+        self.textLogging.setText("Журнал пуст")
 
     @QtCore.pyqtSlot(list)
     def onRefreshSignalReverted(self, list):
@@ -120,7 +181,7 @@ class MainWindow(QWidget):
         self.keyFunctionals.setText(str(list[0][4]))
 
         if len(list[1]) == 0:
-            self.textLogging.setText("Log is empty")
+            self.textLogging.setText("Журнал пуст")
         elif len(list[1][0]) == 1:
             self.textLogging.setText(str(list[1]))
         else:
@@ -129,19 +190,16 @@ class MainWindow(QWidget):
                 text += str(item) + "\n"
             self.textLogging.setText(text)
 
-def onButtonMonitoringClick(window):
-    window.monitoringSignal.emit()
+    def onButtonMonitoringClick(self):
+        self.monitoringSignal.emit()
 
-def onButtonAddUserClick(window):
-    name = window.editUserName.text().strip()
-    if name != "":
-        window.addUserSignal.emit([name])
-    else:
-        ErrorMessage("Неправильный формат имени") #TODO
+    def onButtonAddUserClick(self):
+        name = self.editUserName.text().strip()
+        self.addUserSignal.emit([name])
 
-def onButtonDeleteUserClick(window):
-    name = window.editUserName.text().strip()
-    window.deleteUserSignal.emit([name])
+    def onButtonDeleteUserClick(self):
+        name = self.editUserName.text().strip()
+        self.deleteUserSignal.emit([name])
 
-def onButtonClearLogClick(window):
-    window.clearLogSignal.emit()
+    def onButtonClearLogClick(self):
+        self.clearLogSignal.emit()

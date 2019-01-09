@@ -1,6 +1,8 @@
+# Savital https://github.com/Savital
+
 import sys
 sys.path.append("../")
-from models import KeypadMonitoringDB
+from models.db import Users, Log
 
 import unittest
 import sqlite3
@@ -10,7 +12,7 @@ from unittest.mock import patch, MagicMock
 
 class ModelsTest(unittest.TestCase):
     def setUp(self):
-        self.db = KeypadMonitoringDB()
+        self.db = Users()
         self.db.dropTableUsers()
 
     def tearDown(self):
