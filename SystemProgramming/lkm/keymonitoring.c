@@ -257,9 +257,7 @@ static void workqueue_function(struct work_struct *work) // 0x3A TODO
         if (keystore[scancode].scancode == -1)
         {
             tmp = mtime();
-
             comb_number++;
-
             keystore[scancode].scancode = scancode;
 
             if (scancode == 0x3A)
@@ -273,13 +271,13 @@ static void workqueue_function(struct work_struct *work) // 0x3A TODO
             if (isRU)
                 keystore[scancode].state += 2;
 
-		    keystore[scancode].comb_number = comb_number;
-		    keystore[scancode].down_time = tmp;
-		    keystore[scancode].search_time = tmp - search_time;
-		    insert_in_queue(log_queue_table, scancode, keystore[scancode].state, keystore[scancode].comb_number, 0, keystore[scancode].search_time);
+            keystore[scancode].down_time = tmp;
+            keystore[scancode].search_time = tmp - search_time;
+            keystore[scancode].comb_number = comb_number;
+            search_time = tmp;
+        }
 
-		    search_time = tmp;
-		}
+		insert_in_queue(log_queue_table, scancode, keystore[scancode].state, keystore[scancode].comb_number, 0, keystore[scancode].search_time);
 	}
 
 	kfree((void*)work);

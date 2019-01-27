@@ -18,6 +18,8 @@ class Calc():
     def construct(self):
         pass
 
+    def recProt(self):
+        pass
 
     def cntShortcuts(self):
         states = []
