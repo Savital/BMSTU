@@ -23,17 +23,17 @@ class ProcReader():
         for line in f:
             list = []
             i = 0
-            num = ""
+            elm = ""
             while i < len(line):
                 if line[i] == ' ':
-                    list.append(num)
-                    num = ""
+                    list.append(elm.strip())
+                    elm = ""
                 if line[i] == '\n':
-                    list.append(num)
+                    list.append(elm.strip())
                     break
-                num += line[i]
+                elm += line[i]
                 i += 1
             results.append(list)
         f.close()
-
+        print(results)
         return results

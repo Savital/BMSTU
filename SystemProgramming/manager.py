@@ -2,6 +2,8 @@
 # manager.py Manager control
 
 import sys
+from subprocess import check_output
+import threading
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication
@@ -15,6 +17,8 @@ from views.forms import MainForm
 
 # Controller, handles signals between view and model
 class Manager(QtCore.QObject):
+    dbLock = threading.RLock()
+
     PROC_PATH = "/proc/keymonitoring"
 
     doneInitSignal = QtCore.pyqtSignal(list)
@@ -34,7 +38,7 @@ class Manager(QtCore.QObject):
         self.timer = RefreshEventGenerator(0.01, self.onRefreshEvent)
         self.timer.start()
 
-    def __del__(self): #TODO
+    def __del__(self):
         self.timer.cancel()
 
     def construct(self):
@@ -89,19 +93,22 @@ class Manager(QtCore.QObject):
 
         self.doneInitSignal.emit([self.users])
 
-    def refreshData(self):
+    def refreshData(self): #TODO
         self.log = self.mLog.selectByName(self.user)
         self.stats = self.mCalc.formStats(self.log)
 
-
     def onRefreshEvent(self):
-        list = self.mProcReader.get(self.PROC_PATH)
-        if list:
-            self.mLog.insert(self.user, list)
+        self.dbLock.acquire()
+        try:
+            list = self.mProcReader.get(self.PROC_PATH)
+            if list:
+                self.mLog.insert(self.user, list)
 
-        self.refreshData()
+            self.refreshData()
 
-        self.refreshDataSignal.emit([self.stats, self.log])
+            self.refreshDataSignal.emit([self.stats, self.log])
+        finally:
+            self.dbLock.release()
 
     @QtCore.pyqtSlot(list)
     def changeUserState(self, list):
@@ -113,14 +120,24 @@ class Manager(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def monitoring(self):
-        self.monitoringFlag = not self.monitoringFlag
-        if self.monitoringFlag:
-            list = self.mProcReader.get(self.PROC_PATH)
-            self.timer.runF()
-        else:
-            self.timer.stopF()
+        try:
+            existLKM = check_output("lsmod | grep keymonitoring", shell=True).decode()
+            if (existLKM != ""):
+                print(existLKM)
 
-        self.doneMonitoringSignal.emit([self.monitoringFlag])
+            self.monitoringFlag = not self.monitoringFlag
+            if self.monitoringFlag:
+                self.mProcReader.get(self.PROC_PATH)
+                self.timer.runF()
+            else:
+                self.timer.stopF()
+
+            self.doneMonitoringSignal.emit([self.monitoringFlag])
+
+        except:
+            print("EXCEPT")
+            self.errorSignal.emit(["LKM_MISSING"])
+
 
     @QtCore.pyqtSlot(list)
     def addUser(self, list):
@@ -146,8 +163,12 @@ class Manager(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def clearLog(self):
-        self.mLog.delete(self.user)
-        self.doneClearLogSignal.emit()
+        self.dbLock.acquire()
+        try:
+            self.mLog.delete(self.user)
+            self.doneClearLogSignal.emit()
+        finally:
+            self.dbLock.release()
 
     @QtCore.pyqtSlot()
     def close(self):

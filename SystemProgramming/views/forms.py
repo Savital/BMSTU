@@ -14,7 +14,8 @@ class BaseForm(QWidget):
                 "EMPTY_NAME" : ["Ошибка", "Остались незаполненные поля."],
                 "ALREADY_EXIST" : ["Ошибка", "Данное имя уже присутствует в базе данных."],
                 "DOESNT_EXIST" : ["Ошибка", "Данного имени нет в базе данных."],
-                "WRONG_FORMAT" : ["Ошибка", "Неправильный формат имени."]}
+                "WRONG_FORMAT" : ["Ошибка", "Неправильный формат имени."],
+                "LKM_MISSING" : ["Ошибка", "Отсутсвует модуль сбора статистики."]}
 
     initWindowSignal = QtCore.pyqtSignal()
     changeUserStateSignal = QtCore.pyqtSignal(list)
@@ -81,7 +82,10 @@ class BaseForm(QWidget):
         pass
 
     def displayMessage(self, list):
-        message = self.messages[list[0]]
+        try:
+            message = self.messages[list[0]]
+        except:
+            message = ["Ошибка", "Неизвестная ошибка."]
         return QMessageBox.critical(self, message[0], message[1], QMessageBox.Ok)
 
     def askMessage(self, list):

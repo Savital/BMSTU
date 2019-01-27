@@ -68,11 +68,11 @@ class Users():
         self.conn.close()
 
 class Log():
-    createTableSQL = "CREATE TABLE IF NOT EXISTS log(username CHAR, scancode INT, downtime INT, searchtime INT, keyname CHAR)"
+    createTableSQL = "CREATE TABLE IF NOT EXISTS log(username CHAR, scancode INT, downtime INT, searchtime INT, keyname CHAR, ordernum INT)"
     dropTableSQL = "DROP TABLE IF EXISTS log"
     selectSQL = "SELECT * FROM log"
     selectByNameSQL = "SELECT * FROM log WHERE username='{0}'"
-    insertSQL = "INSERT INTO log VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')"
+    insertSQL = "INSERT INTO log VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')"
     deleteSQL = "DELETE FROM log WHERE username = '{0}'"
 
     def __init__(self):
@@ -119,13 +119,14 @@ class Log():
     def insert(self, name, list):
         self.conn = sqlite3.connect("keypadMonitoringDB.db")
         self.cursor = self.conn.cursor()
+        print(list)
         if len(list) == 0:
             pass
         elif len(list[0]) == 1:
-            self.cursor.execute(self.insertSQL.format(name, list[0], list[1], list[2], list[3]))
+            self.cursor.execute(self.insertSQL.format(name, list[0], list[1], list[2], list[3], list[4]))
         else:
             for item in list:
-                self.cursor.execute(self.insertSQL.format(name, item[0], item[1], item[2], item[3]))
+                self.cursor.execute(self.insertSQL.format(name, item[0], item[1], item[2], item[3], item[4]))
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
